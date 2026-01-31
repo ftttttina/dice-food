@@ -3,189 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DESTINY - PHYSICS ENGINE</title>
+  <title>DESTINY DINNER - ULTIMATE</title>
   <style>
-    :root { 
-      --accent: #ffffff; 
-      --glass-bg: rgba(255, 255, 255, 0.08); 
-      --glass-border: rgba(255, 255, 255, 0.2);
+    :root {
+      --bg: #000;
+      --light-x: 50%;
+      --light-y: 50%;
+    }
+    body, html {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: var(--bg); overflow: hidden;
+      font-family: "SF Pro Display", -apple-system, sans-serif; color: #fff;
     }
 
-    body {
-      font-family: "SF Pro Display", -apple-system, sans-serif;
-      margin: 0; padding: 0; height: 100vh; width: 100vw;
-      background: #000; overflow: hidden; color: #fff;
-      background-image: radial-gradient(circle at center, #1c1c1e 0%, #000 100%);
+    /* --- 強烈動態光影背景 --- */
+    #ambient {
+      position: absolute; width: 100%; height: 100%;
+      background: 
+        radial-gradient(circle at var(--light-x) var(--light-y), rgba(255,255,255,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, #1a1a1c 0%, #000 80%);
+      z-index: 0;
     }
 
-    /* 容器：所有物理元素都在此运动 */
-    #world { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
-
-    .header { position: absolute; top: 10vh; width: 100%; text-align: center; pointer-events: none; z-index: 10; }
-    h1 { font-weight: 200; font-size: 0.8rem; letter-spacing: 12px; margin: 0; opacity: 0.8; }
-
-    /* 3D 骰子物体 */
-    .dice-obj {
-      position: absolute; width: 60px; height: 60px;
-      perspective: 600px; transform-origin: center center;
-      touch-action: none; cursor: grab;
-    }
-
-    .cube {
-      width: 100%; height: 100%; position: relative;
-      transform-style: preserve-3d;
-      pointer-events: none;
-    }
-
+    /* --- 物理物件 --- */
+    #world { position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+    .dice-obj { position: absolute; width: 64px; height: 64px; perspective: 1000px; will-change: transform; }
+    .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
     .cube div {
-      position: absolute; width: 60px; height: 60px;
-      background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 0.5px solid var(--glass-border); border-radius: 12px;
+      position: absolute; width: 64px; height: 64px;
+      background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px;
       display: grid; padding: 10px; box-sizing: border-box;
     }
 
-    /* 标准 7 点相对物理面 */
-    .f1 { transform: rotateY(0deg) translateZ(30px); }
-    .f6 { transform: rotateY(180deg) translateZ(30px); }
-    .f3 { transform: rotateY(90deg) translateZ(30px); }
-    .f4 { transform: rotateY(-90deg) translateZ(30px); }
-    .f2 { transform: rotateX(90deg) translateZ(30px); }
-    .f5 { transform: rotateX(-90deg) translateZ(30px); }
+    /* 點數樣式 */
+    .dot { width: 10px; height: 10px; background: #fff; border-radius: 50%; align-self: center; justify-self: center; box-shadow: 0 0 8px #fff; }
+    .f1 { transform: rotateY(0deg) translateZ(32px); }
+    .f6 { transform: rotateY(180deg) translateZ(32px); }
+    .f2 { transform: rotateX(90deg) translateZ(32px); }
+    .f5 { transform: rotateX(-90deg) translateZ(32px); }
+    .f3 { transform: rotateY(90deg) translateZ(32px); }
+    .f4 { transform: rotateY(-90deg) translateZ(32px); }
 
-    .dot { display: block; width: 9px; height: 9px; background: rgba(255,255,255,0.9); border-radius: 50%; align-self: center; justify-self: center; }
-    .f1 .dot { background: #fff; box-shadow: 0 0 8px #fff; }
-
-    /* 结果卡片 */
-    #result-box {
-      position: absolute; bottom: 15vh; width: 100%;
-      display: flex; justify-content: center; pointer-events: none;
+    /* --- 結果顯示區 --- */
+    .result-container {
+      position: absolute; top: 40%; width: 100%; text-align: center;
+      z-index: 5; pointer-events: none;
     }
-    .result-card {
-      padding: 20px; border-left: 1px solid #fff;
-      background: rgba(255,255,255,0.02); backdrop-filter: blur(10px);
-      width: 200px; opacity: 0; transform: translateY(20px);
-      transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-    .result-card.show { opacity: 1; transform: translateY(0); }
+    #food-name { font-size: 2rem; font-weight: 200; letter-spacing: 10px; margin: 0; opacity: 0; transition: 1.5s; }
+    #food-sub { font-size: 0.6rem; letter-spacing: 4px; opacity: 0; margin-top: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; transition: 2s; }
 
-    /* 按钮 */
+    /* --- 控制面板 --- */
+    .controls { position: absolute; bottom: 8vh; width: 100%; display: flex; justify-content: center; gap: 15px; z-index: 10; }
     .btn {
-      position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
-      background: #fff; color: #000; border: none; padding: 12px 40px;
-      border-radius: 30px; font-size: 0.7rem; letter-spacing: 2px;
-      cursor: pointer; z-index: 100;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; padding: 15px 30px; border-radius: 40px; font-size: 0.7rem; letter-spacing: 2px;
+      cursor: pointer; backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent;
     }
+    .btn.active { background: #fff; color: #000; }
   </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>PHYSICS ENGINE</h1>
-  <div id="time-tag" style="font-size: 0.4rem; opacity: 0.3; margin-top: 5px;">TIME-AWARE MONOCHROME</div>
-</div>
-
+<div id="ambient"></div>
 <div id="world">
-  <div id="d1" class="dice-obj" style="left: 30%; top: 40%;">
-    <div class="cube" id="c1">
-      <div class="f1"><span class="dot"></span></div>
-      <div class="f6" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="f2" style="display:flex; justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
-      <div class="f5" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
-      <div class="f3" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
-      <div class="f4" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    </div>
-  </div>
-  <div id="d2" class="dice-obj" style="left: 60%; top: 45%;">
-    <div class="cube" id="c2">
-      <div class="f1"><span class="dot"></span></div>
-      <div class="f6" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="f2" style="display:flex; justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
-      <div class="f5" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
-      <div class="f3" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
-      <div class="f4" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    </div>
-  </div>
+  <div id="d1" class="dice-obj"><div class="cube" id="c1">
+    <div class="f1"><span class="dot"></span></div>
+    <div class="f6" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f2" style="display:flex; justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
+    <div class="f5" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
+    <div class="f3" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+    <div class="f4" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  </div></div>
+  <div id="d2" class="dice-obj"><div class="cube" id="c2">
+    <div class="f1"><span class="dot"></span></div>
+    <div class="f6" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f2" style="display:flex; justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
+    <div class="f5" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
+    <div class="f3" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+    <div class="f4" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  </div></div>
 </div>
 
-<div id="result-box"></div>
-<button class="btn" onclick="throwDice()">SHAKE</button>
+<div class="result-container">
+  <h2 id="food-name"></h2>
+  <div id="food-sub"></div>
+</div>
+
+<div class="controls">
+  <button class="btn" onclick="shake()">SHAKE</button>
+  <button class="btn" id="motionBtn" onclick="toggleMotion()">MOTION: OFF</button>
+</div>
 
 <script>
-  const dice = [
-    { el: document.getElementById('d1'), cube: document.getElementById('c1'), x: 100, y: 300, vx: 0, vy: 0, rx: 0, ry: 0, rz: 0 },
-    { el: document.getElementById('d2'), cube: document.getElementById('c2'), x: 250, y: 350, vx: 0, vy: 0, rx: 0, ry: 0, rz: 0 }
+  // --- 菜單數據 (精簡版，可自行按格式擴充) ---
+  const menuData = {
+    morning: ["舒肥雞沙拉", "精品手沖", "酪梨吐司", "日式飯糰", "希臘優格"],
+    noon: ["精緻便當", "牛肉麵", "海南雞飯", "義大利麵", "石鍋拌飯"],
+    evening: ["熟成牛排", "麻辣火鍋", "職人壽司", "法式油封鴨", "居酒屋"],
+    midnight: ["深夜拉麵", "串燒盛合", "鹽酥雞", "永和豆漿", "韓式炸雞"]
+  };
+
+  let dice = [
+    { el: document.getElementById('d1'), c: document.getElementById('c1'), x: 100, y: 200, vx: 0, vy: 0, rx: 0, ry: 0 },
+    { el: document.getElementById('d2'), c: document.getElementById('c2'), x: 250, y: 250, vx: 0, vy: 0, rx: 0, ry: 0 }
   ];
 
-  const bounce = 0.7; // 弹力系数
-  const friction = 0.98; // 空气摩擦力
-  let isPhysicsActive = false;
+  let useMotion = false, gX = 0, gY = 0, isRolling = false;
+  const bounce = 0.6, friction = 0.98;
 
-  function throwDice() {
-    if(isPhysicsActive) return;
-    isPhysicsActive = true;
-    document.getElementById('result-box').innerHTML = "";
-
+  function shake() {
+    isRolling = true;
+    document.getElementById('food-name').style.opacity = 0;
+    document.getElementById('food-sub').style.opacity = 0;
     dice.forEach(d => {
-      d.vx = (Math.random() - 0.5) * 40;
-      d.vy = (Math.random() - 0.5) * 40;
+      d.vx += (Math.random()-0.5)*50;
+      d.vy += (Math.random()-0.5)*50;
     });
-    update();
   }
 
-  function update() {
-    let totalSpeed = 0;
-
-    dice.forEach(d => {
-      // 物理位移
-      d.x += d.vx;
-      d.y += d.vy;
-
-      // 碰撞检测：屏幕边界
-      if (d.x < 0 || d.x > window.innerWidth - 60) { d.vx *= -bounce; d.x = d.x < 0 ? 0 : window.innerWidth - 60; }
-      if (d.y < 0 || d.y > window.innerHeight - 60) { d.vy *= -bounce; d.y = d.y < 0 ? 0 : window.innerHeight - 60; }
-
-      // 摩擦力
-      d.vx *= friction;
-      d.vy *= friction;
-
-      // 旋转表现（旋转速度与位移速度挂钩）
-      d.rx += d.vy * 5;
-      d.ry += d.vx * 5;
-
-      d.el.style.transform = `translate3d(${d.x}px, ${d.y}px, 0)`;
-      d.cube.style.transform = `rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
-
-      totalSpeed += Math.abs(d.vx) + Math.abs(d.vy);
-    });
-
-    if (totalSpeed > 0.5) {
-      requestAnimationFrame(update);
+  function toggleMotion() {
+    if (!useMotion) {
+      if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission().then(s => { if(s==='granted') startMotion(); });
+      } else { startMotion(); }
     } else {
-      finalize();
+      useMotion = false; gX = 0; gY = 0;
+      document.getElementById('motionBtn').innerText = "MOTION: OFF";
+      document.getElementById('motionBtn').classList.remove('active');
     }
   }
 
-  const pointRots = {
-    1: [0, 0], 2: [-90, 0], 3: [0, -90], 4: [0, 90], 5: [90, 0], 6: [0, 180]
-  };
+  function startMotion() {
+    useMotion = true;
+    document.getElementById('motionBtn').innerText = "MOTION: ON";
+    document.getElementById('motionBtn').classList.add('active');
+    window.addEventListener('deviceorientation', e => {
+      if(!useMotion) return;
+      gX = e.gamma / 15; gY = e.beta / 15;
+    });
+  }
 
-  function finalize() {
+  function update() {
+    let activeSpeed = 0;
     dice.forEach(d => {
-      const point = Math.floor(Math.random() * 6) + 1;
-      const rot = pointRots[point];
-      d.cube.style.transition = "transform 0.8s ease-out";
-      d.cube.style.transform = `rotateX(${rot[0]}deg) rotateY(${rot[1]}deg)`;
+      d.vx += gX; d.vy += gY;
+      d.vx *= friction; d.vy *= friction;
+      d.x += d.vx; d.y += d.vy;
+
+      // 邊界反彈
+      if(d.x < 0) { d.x = 0; d.vx *= -bounce; }
+      if(d.x > window.innerWidth - 64) { d.x = window.innerWidth - 64; d.vx *= -bounce; }
+      if(d.y < 0) { d.y = 0; d.vy *= -bounce; }
+      if(d.y > window.innerHeight - 64) { d.y = window.innerHeight - 64; d.vy *= -bounce; }
+
+      d.rx += d.vy * 3; d.ry += d.vx * 3;
+      d.el.style.transform = `translate3d(${d.x}px, ${d.y}px, 0)`;
+      d.c.style.transform = `rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
+      
+      activeSpeed += Math.abs(d.vx) + Math.abs(d.vy);
     });
 
-    setTimeout(() => {
-      const card = document.createElement('div');
-      card.className = "result-card";
-      card.innerHTML = `<span style="font-size:1.2rem; letter-spacing:2px;">深夜食堂</span><br><span style="font-size:0.6rem; opacity:0.4;">MIDNIGHT DINER</span>`;
-      document.getElementById('result-box').appendChild(card);
-      setTimeout(() => card.classList.add('show'), 50);
-      isPhysicsActive = false;
-    }, 800);
+    // 動態光影跟隨第一個骰子
+    document.body.style.setProperty('--light-x', `${(dice[0].x / window.innerWidth)*100}%`);
+    document.body.style.setProperty('--light-y', `${(dice[0].y / window.innerHeight)*100}%`);
+
+    // 停止判定
+    if (isRolling && activeSpeed < 0.5) {
+      isRolling = false;
+      showResult();
+    }
+    requestAnimationFrame(update);
   }
+
+  function showResult() {
+    const hr = new Date().getHours();
+    let list = menuData.evening;
+    let period = "Dinner Selection";
+    
+    if(hr >= 5 && hr < 11) { list = menuData.morning; period = "Breakfast Selection"; }
+    else if(hr >= 11 && hr < 17) { list = menuData.noon; period = "Lunch Selection"; }
+    else if(hr >= 22 || hr < 5) { list = menuData.midnight; period = "Midnight Selection"; }
+
+    const food = list[Math.floor(Math.random()*list.length)];
+    const nameEl = document.getElementById('food-name');
+    const subEl = document.getElementById('food-sub');
+    
+    nameEl.innerText = food;
+    subEl.innerText = period;
+    nameEl.style.opacity = 1;
+    subEl.style.opacity = 1;
+
+    // 骰子歸位動畫（修正回正確的面）
+    dice.forEach(d => {
+      d.c.style.transition = "transform 1s ease-out";
+      d.c.style.transform = `rotateX(0deg) rotateY(0deg)`;
+      setTimeout(() => { d.c.style.transition = "none"; }, 1000);
+    });
+  }
+
+  update();
 </script>
 </body>
 </html>
