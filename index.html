@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>DESTINY DINNER - REAL DICE</title>
+  <title>DESTINY DINNER - AUDIO FIXED</title>
   <style>
     :root { --accent: #ffffff; --dice-size: 55px; }
 
@@ -39,15 +39,14 @@
     }
     .dot { background: #ffffff; border-radius: 50%; box-shadow: 0 0 10px #ffffff; width: 6px; height: 6px; align-self: center; justify-self: center; }
 
-    /* 真實骰子點數排布 */
-    .f1 .dot { grid-area: 2/2; } /* 1點: 正中間 */
-    .f2 .dot:nth-child(1) { grid-area: 1/3; } .f2 .dot:nth-child(2) { grid-area: 3/1; } /* 2點: 對角 */
-    .f3 .dot:nth-child(1) { grid-area: 1/3; } .f3 .dot:nth-child(2) { grid-area: 2/2; } .f3 .dot:nth-child(3) { grid-area: 3/1; } /* 3點: 斜向 */
-    .f4 .dot:nth-child(1) { grid-area: 1/1; } .f4 .dot:nth-child(2) { grid-area: 1/3; } .f4 .dot:nth-child(3) { grid-area: 3/1; } .f4 .dot:nth-child(4) { grid-area: 3/3; } /* 4點: 四角 */
-    .f5 .dot:nth-child(1) { grid-area: 1/1; } .f5 .dot:nth-child(2) { grid-area: 1/3; } .f5 .dot:nth-child(3) { grid-area: 2/2; } .f5 .dot:nth-child(4) { grid-area: 3/1; } .f5 .dot:nth-child(5) { grid-area: 3/3; } /* 5點: 四角+中間 */
-    .f6 .dot:nth-child(1) { grid-area: 1/1; } .f6 .dot:nth-child(2) { grid-area: 1/3; } .f6 .dot:nth-child(3) { grid-area: 2/1; } .f6 .dot:nth-child(4) { grid-area: 2/3; } .f6 .dot:nth-child(5) { grid-area: 3/1; } .f6 .dot:nth-child(6) { grid-area: 3/3; } /* 6點: 兩列 */
+    /* 真實骰子點數 */
+    .f1 .dot { grid-area: 2/2; }
+    .f2 .dot:nth-child(1) { grid-area: 1/3; } .f2 .dot:nth-child(2) { grid-area: 3/1; }
+    .f3 .dot:nth-child(1) { grid-area: 1/3; } .f3 .dot:nth-child(2) { grid-area: 2/2; } .f3 .dot:nth-child(3) { grid-area: 3/1; }
+    .f4 .dot:nth-child(1) { grid-area: 1/1; } .f4 .dot:nth-child(2) { grid-area: 1/3; } .f4 .dot:nth-child(3) { grid-area: 3/1; } .f4 .dot:nth-child(4) { grid-area: 3/3; }
+    .f5 .dot:nth-child(1) { grid-area: 1/1; } .f5 .dot:nth-child(2) { grid-area: 1/3; } .f5 .dot:nth-child(3) { grid-area: 2/2; } .f5 .dot:nth-child(4) { grid-area: 3/1; } .f5 .dot:nth-child(5) { grid-area: 3/3; }
+    .f6 .dot:nth-child(1) { grid-area: 1/1; } .f6 .dot:nth-child(2) { grid-area: 1/3; } .f6 .dot:nth-child(3) { grid-area: 2/1; } .f6 .dot:nth-child(4) { grid-area: 2/3; } .f6 .dot:nth-child(5) { grid-area: 3/1; } .f6 .dot:nth-child(6) { grid-area: 3/3; }
 
-    /* 真實骰子空間位置：對面相加為 7 (1-6, 2-5, 3-4) */
     .f1 { transform: rotateY(0deg) translateZ(27.5px); }
     .f6 { transform: rotateY(180deg) translateZ(27.5px); }
     .f2 { transform: rotateX(90deg) translateZ(27.5px); }
@@ -79,20 +78,10 @@
 
 <div id="world">
   <div id="d1" class="dice-obj"><div class="cube" id="c1">
-    <div class="f1"><span class="dot"></span></div>
-    <div class="f2"><span class="dot"></span><span class="dot"></span></div>
-    <div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f1"><span class="dot"></span></div><div class="f2"><span class="dot"></span><span class="dot"></span></div><div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div></div>
   <div id="d2" class="dice-obj"><div class="cube" id="c2">
-    <div class="f1"><span class="dot"></span></div>
-    <div class="f2"><span class="dot"></span><span class="dot"></span></div>
-    <div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f1"><span class="dot"></span></div><div class="f2"><span class="dot"></span><span class="dot"></span></div><div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div></div>
 </div>
 
@@ -103,26 +92,48 @@
 </div>
 
 <div class="controls">
-  <div class="btn" onclick="initAudio(); shake()"><span>SHAKE</span></div>
-  <div class="btn" id="mBtn" onclick="initAudio(); toggleMotion()"><span>MOTION</span></div>
+  <div class="btn" onclick="handleInteraction('shake')"><span>SHAKE</span></div>
+  <div class="btn" id="mBtn" onclick="handleInteraction('motion')"><span>MOTION</span></div>
 </div>
 
 <script>
   let audioCtx;
-  function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-  function playTick(vol = 0.1, freq = 800) {
-    if (!audioCtx) return;
-    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-    osc.type = 'sine'; osc.frequency.setValueAtTime(freq + Math.random() * 200, audioCtx.currentTime);
-    gain.gain.setValueAtTime(vol, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+  
+  // 強制初始化音頻
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
   }
 
-  // 此處保留之前的 200 個菜色數據 (morning, noon, evening, midnight 各 50 個)
+  function playTick(vol = 0.1, freq = 800) {
+    if (!audioCtx || audioCtx.state !== 'running') return;
+    try {
+      const osc = audioCtx.createOscillator(); 
+      const gain = audioCtx.createGain();
+      osc.type = 'sine'; 
+      osc.frequency.setValueAtTime(freq + Math.random() * 200, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime); 
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+      osc.connect(gain); gain.connect(audioCtx.destination); 
+      osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+    } catch(e) { console.error("Audio play error", e); }
+  }
+
+  function handleInteraction(type) {
+    initAudio(); // 每次點擊都嘗試啟動音頻
+    if(type === 'shake') shake();
+    if(type === 'motion') toggleMotion();
+  }
+
+  // 菜單數據... (此處保留之前的數據)
   const menu = {
     morning: [{cn:"精品手沖", en:"Filter Coffee"}, {cn:"酪梨吐司", en:"Avocado Toast"}, {cn:"希臘優格", en:"Greek Yogurt"}, {cn:"台式蛋餅", en:"Omelet"}, {cn:"港式早茶", en:"Dim Sum"}, {cn:"法式吐司", en:"French Toast"}, {cn:"班尼迪克蛋", en:"Eggs Benedict"}, {cn:"貝果拼盤", en:"Bagel Platter"}, {cn:"日式飯糰", en:"Onigiri"}, {cn:"越式河粉", en:"Pho"}, {cn:"肉蛋吐司", en:"Meat Egg Toast"}, {cn:"舒芙蕾", en:"Soufflé"}, {cn:"燒餅油條", en:"Dough Sticks"}, {cn:"熱壓吐司", en:"Panini"}, {cn:"美式鬆餅", en:"Pancakes"}, {cn:"低卡沙拉", en:"Clean Salad"}, {cn:"墨西哥捲", en:"Burrito"}, {cn:"皮蛋瘦肉粥", en:"Pork Congee"}, {cn:"奇亞籽碗", en:"Acai Bowl"}, {cn:"英式早餐", en:"Full English"}, {cn:"上海生煎", en:"Sheng Jian"}, {cn:"比利時鬆餅", en:"Waffles"}, {cn:"小籠包", en:"Soup Dumplings"}, {cn:"荷蘭鬆餅", en:"Dutch Baby"}, {cn:"火腿蛋鬆餅", en:"Muffin"}, {cn:"水果燕麥", en:"Oatmeal Bowl"}, {cn:"煙燻鮭魚", en:"Smoked Salmon"}, {cn:"可頌三明治", en:"Croissant"}, {cn:"味噌湯麵", en:"Miso Noodles"}, {cn:"豆漿米漿", en:"Soy Milk"}, {cn:"歐姆蛋捲", en:"Omelette"}, {cn:"花生吐司", en:"Peanut Toast"}, {cn:"雜糧麵包", en:"Sourdough"}, {cn:"蔬菜烘蛋", en:"Frittata"}, {cn:"海南雞絲粉", en:"Chicken Vermicelli"}, {cn:"鮪魚飯糰", en:"Tuna Onigiri"}, {cn:"牛肉燒餅", en:"Beef Roll"}, {cn:"咖哩餃", en:"Curry Puff"}, {cn:"糯米雞", en:"Sticky Rice"}, {cn:"蘿蔔糕", en:"Turnip Cake"}, {cn:"地瓜粥", en:"Sweet Potato Porridge"}, {cn:"太陽蛋", en:"Sunny Side Up"}, {cn:"吐司去邊", en:"White Bread"}, {cn:"藍莓貝果", en:"Blueberry Bagel"}, {cn:"全麥意粉", en:"Wheat Pasta"}, {cn:"南瓜湯", en:"Pumpkin Soup"}, {cn:"雞蛋仔", en:"Egg Waffle"}, {cn:"鐵板炒麵", en:"Sizzling Noodles"}, {cn:"蔥抓餅", en:"Scallion Pancake"}, {cn:"鹹豆漿", en:"Salty Soy Milk"}],
     noon: [{cn:"職人漢堡", en:"Craft Burger"}, {cn:"牛肉麵", en:"Beef Noodles"}, {cn:"海南雞飯", en:"Chicken Rice"}, {cn:"夏威夷碗", en:"Poke Bowl"}, {cn:"日式定食", en:"Bento Set"}, {cn:"泰式排骨", en:"Thai Pork Rice"}, {cn:"義大利麵", en:"Pasta"}, {cn:"石鍋拌飯", en:"Bibimbap"}, {cn:"現烤披薩", en:"Fresh Pizza"}, {cn:"麻辣燙", en:"Mala Tang"}, {cn:"廣式燒臘", en:"Roast Meat"}, {cn:"日式沾麵", en:"Tsukemen"}, {cn:"排骨飯", en:"Pork Ribs Rice"}, {cn:"打拋豬飯", en:"Basil Pork Rice"}, {cn:"咖哩蛋包飯", en:"Omurice"}, {cn:"土耳其卡巴", en:"Kebab"}, {cn:"韓式冷麵", en:"Naengmyeon"}, {cn:"越式法包", en:"Banh Mi"}, {cn:"鐵板麵", en:"Teppanyaki"}, {cn:"酸辣粉", en:"Sour Spicy Noodles"}, {cn:"照燒雞腿", en:"Teriyaki Chicken"}, {cn:"揚州炒飯", en:"Fried Rice"}, {cn:"重慶小麵", en:"Chongqing Noodles"}, {cn:"天婦羅丼", en:"Tempura Don"}, {cn:"壽喜燒", en:"Sukiyaki Bowl"}, {cn:"蘭州拉麵", en:"Lanzhou Ramen"}, {cn:"魯肉飯", en:"Braised Pork Rice"}, {cn:"墨西哥夾餅", en:"Tacos"}, {cn:"印尼炒麵", en:"Mie Goreng"}, {cn:"溫州大餛飩", en:"Wonton Soup"}, {cn:"乾拌麵", en:"Dry Noodles"}, {cn:"紅油抄手", en:"Spicy Wonton"}, {cn:"豬排三明治", en:"Katsu Sando"}, {cn:"親子丼", en:"Oyako Don"}, {cn:"麻辣香鍋", en:"Spicy Dry Pot"}, {cn:"雞肉沙拉", en:"Chicken Salad"}, {cn:"三杯雞飯", en:"Three-cup Chicken"}, {cn:"清燉牛肉湯", en:"Clear Beef Soup"}, {cn:"滑蛋蝦仁", en:"Shrimp Egg Rice"}, {cn:"肉醬千層麵", en:"Lasagna"}, {cn:"素食餐盒", en:"Vegan Box"}, {cn:"燒肉丼", en:"Yakiniku Don"}, {cn:"麻婆豆腐", en:"Mapo Tofu"}, {cn:"炸雞咖哩", en:"Katsu Curry"}, {cn:"油潑麵", en:"Oil Spill Noodles"}, {cn:"叉燒飯", en:"Char Siu Rice"}, {cn:"胡椒餅", en:"Pepper Bun"}, {cn:"生魚片丼", en:"Chirashi Don"}, {cn:"台式控肉飯", en:"Stewed Pork Rice"}, {cn:"奶油燉飯", en:"Creamy Risotto"}],
-    evening: [{cn:"熟成牛排", en:"Aged Steak"}, {cn:"重慶火鍋", en:"Hotpot"}, {cn:"極上壽司", en:"Omakase"}, {cn:"拿坡里披薩", en:"Pizza"}, {cn:"西班牙燉飯", en:"Paella"}, {cn:"正宗川菜", en:"Szechuan Cuisine"}, {cn:"韓式燒肉", en:"K-BBQ"}, {cn:"美式肋排", en:"BBQ Ribs"}, {cn:"居酒屋烤物", en:"Yakitori"}, {cn:"法式小館", en:"French Bistro"}, {cn:"北京烤鴨", en:"Peking Duck"}, {cn:"泰式檸檬魚", en:"Thai Fish"}, {cn:"港式小炒", en:"Stir-fry"}, {cn:"黑松露燉飯", en:"Truffle Risotto"}, {cn:"地中海料理", en:"Mediterranean"}, {cn:"羊肉爐", en:"Lamb Hotpot"}, {cn:"手工水餃", en:"Dumplings"}, {cn:"印尼沙嗲", en:"Satay"}, {cn:"瑞士火鍋", en:"Fondue"}, {cn:"廣東大排檔", en:"Street Seafood"}, {cn:"波士頓龍蝦", en:"Lobster"}, {cn:"乾鍋肥腸", en:"Spicy Griddle"}, {cn:"日式涮涮鍋", en:"Shabu Shabu"}, {cn:"德式豬腳", en:"Pork Knuckle"}, {cn:"印度咖哩", en:"Indian Curry"}, {cn:"惠靈頓牛排", en:"Wellington"}, {cn:"上海本幫菜", en:"Shanghainese"}, {cn:"避風塘炒蟹", en:"Typhoon Shelter Crab"}, {cn:"潮汕牛肉火鍋", en:"Chaoshan Hotpot"}, {cn:"馬賽魚湯", en:"Bouillabaisse"}, {cn:"松露比薩", en:"Truffle Pizza"}, {cn:"避風塘蝦", en:"Garlic Shrimp"}, {cn:"烤全羊", en:"Roasted Lamb"}, {cn:"海鮮塔", en:"Seafood Tower"}, {cn:"鮑魚撈飯", en:"Abalone Rice"}, {cn:"胡椒豬肚雞", en:"Pork Stomach Chicken"}, {cn:"烤乳豬", en:"Suckling Pig"}, {cn:"鐵板燒", en:"Teppanyaki"}, {cn:"生蠔拼盤", en:"Oyster Platter"}, {cn:"紅酒燉牛肉", en:"Boeuf Bourguignon"}, {cn:"日式燒鳥", en:"Kushiyaki"}, {cn:"客家小炒", en:"Hakka Stir-fry"}, {cn:"砂鍋魚頭", en:"Fish Head Pot"}, {cn:"麻辣烤魚", en:"Spicy Grilled Fish"}, {cn:"酸菜魚", en:"Pickled Fish"}, {cn:"鵝肝醬拌飯", en:"Foie Gras Rice"}, {cn:"威士忌牛排", en:"Whisky Steak"}, {cn:"清蒸大閘蟹", en:"Steamed Crab"}, {cn:"龍蝦意粉", en:"Lobster Pasta"}, {cn:"佛跳牆", en:"Buddha Jumps Over Wall"}],
+    evening: [{cn:"熟成牛排", en:"Aged Steak"}, {cn:"重慶火鍋", en:"Hotpot"}, {cn:"極上壽司", en:"Omakase"}, {cn:"拿坡里披薩", en:"Pizza"}, {cn:"西班牙燉飯", en:"Paella"}, {cn:"正宗川菜", en:"Szechuan Cuisine"}, {cn:"韓式燒肉", en:"K-BBQ"}, {cn:"美式肋排", en:"BBQ Ribs"}, {cn:"居酒屋烤物", en:"Yakitori"}, {cn:"法式小館", en:"French Bistro"}, {cn:"北京烤鴨", en:"Peking Duck"}, {cn:"泰式檸檬魚", en:"Thai Fish"}, {cn:"港式小炒", en:"Stir-fry"}, {cn:"黑松露燉飯", en:"Truffle Risotto"}, {cn:"地中海料理", en:"Mediterranean"}, {cn:"羊肉爐", en:"Lamb Hotpot"}, {cn:"手工水餃", en:"Dumplings"}, {cn:"印尼沙嗲", en:"Satay"}, {cn:"瑞士火鍋", en:"Fondue"}, {cn:"廣東大排檔", en:"Street Seafood"}, {cn:"波士頓龍蝦", en:"Lobster"}, {cn:"乾鍋肥腸", en:"Spicy Griddle"}, {cn:"日式涮涮鍋", en:"Shabu Shabu"}, {cn:"德式豬腳", en:"Pork Knuckle"}, {cn:"印度咖哩", en:"Indian Curry"}, {cn:"惠靈頓牛排", en:"Wellington"}, {cn:"上海本幫菜", en:"Shanghainese"}, {cn:"避風塘炒蟹", en:"Typhoon Shelter Crab"}, {cn:"潮汕牛肉火鍋", en:"Chaoshan Hotpot"}, {cn:"馬賽魚湯", en:"Bouillabaisse"}, {cn:"松露比薩", en:"Truffle Pizza"}, {cn:"避風塘蝦", en:"Garlic Shrimp"}, {cn:"烤全羊", en:"Roasted Lamb"}, {cn:"海鮮塔", en:"Seafood Tower"}, {cn:"鮑魚撈飯", en:"Abalone Rice"}, {cn:"胡椒豬肚雞", en:"Pork Stomach Chicken"}, {cn:"烤乳豬", en:"Suckling Pig"}, {cn:"鐵板燒", en:"Teppanyaki"}, {cn:"生蠔拼盤", en:"Oyster Platter"}, {cn:"紅酒燉牛肉", en:"Boeuf Bourguignon"}, {cn:"日式燒鳥", en:"Kushiyaki"}, {cn:"客家小炒", en:"Hakka Stir-fry"}, {cn:"砂鍋魚頭", en:"Fish Head Pot"}, {cn:"麻辣烤魚", en:"Spicy Grilled Fish"}, {cn:"酸菜魚", en:"Pickled Fish"}, {cn:"鵝肝醬拌飯", en:"Foie Gras Rice"}, {cn:"威士計牛排", en:"Whisky Steak"}, {cn:"清蒸大閘蟹", en:"Steamed Crab"}, {cn:"龍蝦意粉", en:"Lobster Pasta"}, {cn:"佛跳牆", en:"Buddha Jumps Over Wall"}],
     midnight: [{cn:"豚骨拉麵", en:"Tonkotsu Ramen"}, {cn:"台式鹽酥雞", en:"Fried Chicken"}, {cn:"關東煮", en:"Oden"}, {cn:"串燒", en:"Skewers"}, {cn:"深夜和牛", en:"Night Wagyu"}, {cn:"港式甜品", en:"HK Dessert"}, {cn:"永和豆漿", en:"Soy Milk Set"}, {cn:"麻辣小龍蝦", en:"Spicy Crawfish"}, {cn:"清粥小菜", en:"Congee"}, {cn:"墨西哥塔可", en:"Tacos"}, {cn:"熱乾麵", en:"Hot Dry Noodles"}, {cn:"烤冷麵", en:"Grilled Cold Noodles"}, {cn:"泡菜鍋", en:"Kimchi Jjigae"}, {cn:"炸醬麵", en:"Jajangmyeon"}, {cn:"炭烤三明治", en:"Charcoal Toast"}, {cn:"鴨翅滷味", en:"Braised Snacks"}, {cn:"炒米粉", en:"Rice Noodles"}, {cn:"章魚燒", en:"Takoyaki"}, {cn:"麻辣鴨血", en:"Spicy Duck Blood"}, {cn:"深夜食堂丼", en:"Midnight Bowl"}, {cn:"炸薯條", en:"French Fries"}, {cn:"深夜肉夾饃", en:"Meat Burger"}, {cn:"四川冷串", en:"Cold Skewers"}, {cn:"起司泡麵", en:"Cheese Ramen"}, {cn:"烤玉米", en:"Grilled Corn"}, {cn:"鹹水雞", en:"Salted Chicken"}, {cn:"手撕包菜", en:"Shredded Cabbage"}, {cn:"燒烤生蠔", en:"Grilled Oysters"}, {cn:"滷肉刈包", en:"Gua Bao"}, {cn:"深夜甜甜圈", en:"Donuts"}, {cn:"冰糖葫蘆", en:"Sugar Hawthorn"}, {cn:"臭豆腐", en:"Stinky Tofu"}, {cn:"酸辣粉", en:"Sour Spicy Noodles"}, {cn:"韓式炸雞", en:"K-Chicken"}, {cn:"小火鍋", en:"Mini Hotpot"}, {cn:"烤羊肉串", en:"Lamb Skewers"}, {cn:"香腸炒糯米", en:"Sausage Rice"}, {cn:"皮蛋豆腐", en:"Century Egg Tofu"}, {cn:"燒餅夾蛋", en:"Clay Oven Roll"}, {cn:"乾炒牛河", en:"Beef Ho Fun"}, {cn:"砂鍋粥", en:"Casserole Porridge"}, {cn:"香辣蟹", en:"Spicy Crab"}, {cn:"涼麵", en:"Cold Noodles"}, {cn:"深夜燒肉", en:"Midnight BBQ"}, {cn:"厚鬆餅", en:"Thick Pancake"}, {cn:"珍珠奶茶", en:"Bubble Tea"}, {cn:"烤雞翅", en:"Chicken Wings"}, {cn:"蒜泥白肉", en:"Garlic Pork"}, {cn:"東山鴨頭", en:"Braised Duck"}, {cn:"炸餛飩", en:"Fried Wonton"}]
   };
 
@@ -163,7 +174,10 @@
     window.addEventListener('deviceorientation', e => {
       if(useMotion) { 
         gX = e.gamma / 30; gY = e.beta / 30; 
-        if(Math.abs(gX) + Math.abs(gY) > 3.2) { isRolling = true; document.getElementById('f-cn').style.opacity = 0; }
+        if(Math.abs(gX) + Math.abs(gY) > 3.2) { 
+            initAudio(); // 晃動時也嘗試恢復音效
+            isRolling = true; document.getElementById('f-cn').style.opacity = 0; 
+        }
       }
     });
   }
