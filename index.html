@@ -3,267 +3,189 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DESTINY DINNER - ULTIMATE</title>
+  <title>DESTINY - PHYSICS ENGINE</title>
   <style>
-    /* 保持原有的黑白灰呼吸背景與 3D 骰子樣式 */
     :root { 
       --accent: #ffffff; 
-      --glass-bg: rgba(255, 255, 255, 0.05); 
-      --glass-border: rgba(255, 255, 255, 0.15);
-      --dot-color: rgba(255, 255, 255, 0.85);
+      --glass-bg: rgba(255, 255, 255, 0.08); 
+      --glass-border: rgba(255, 255, 255, 0.2);
     }
 
     body {
       font-family: "SF Pro Display", -apple-system, sans-serif;
       margin: 0; padding: 0; height: 100vh; width: 100vw;
-      background-color: #000;
-      background-image: 
-        radial-gradient(circle at 20% 30%, #1c1c1e 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, #2c2c2e 0%, transparent 50%);
-      background-attachment: fixed;
-      animation: bgBreathe 8s infinite alternate ease-in-out;
-      overflow: hidden; display: flex; flex-direction: column; align-items: center; color: #fff;
+      background: #000; overflow: hidden; color: #fff;
+      background-image: radial-gradient(circle at center, #1c1c1e 0%, #000 100%);
     }
 
-    @keyframes bgBreathe {
-      0% { background-size: 100% 100%; opacity: 0.8; }
-      100% { background-size: 120% 120%; opacity: 1; }
+    /* 容器：所有物理元素都在此运动 */
+    #world { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
+
+    .header { position: absolute; top: 10vh; width: 100%; text-align: center; pointer-events: none; z-index: 10; }
+    h1 { font-weight: 200; font-size: 0.8rem; letter-spacing: 12px; margin: 0; opacity: 0.8; }
+
+    /* 3D 骰子物体 */
+    .dice-obj {
+      position: absolute; width: 60px; height: 60px;
+      perspective: 600px; transform-origin: center center;
+      touch-action: none; cursor: grab;
     }
 
-    .header { margin-top: 12vh; text-align: center; }
-    h1 { font-weight: 200; font-size: 0.85rem; letter-spacing: 12px; margin: 0; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-    .sub-head { font-size: 0.45rem; letter-spacing: 4px; opacity: 0.3; margin-top: 8px; text-transform: uppercase; }
+    .cube {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
 
-    .dice-box { display: flex; gap: 40px; margin: 60px 0; }
-    .scene { width: 70px; height: 70px; perspective: 1000px; }
-    .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(15deg); }
     .cube div {
-      position: absolute; width: 70px; height: 70px;
-      background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-      border: 0.5px solid var(--glass-border); border-radius: 16px;
-      display: grid; padding: 12px; box-sizing: border-box;
-      box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
+      position: absolute; width: 60px; height: 60px;
+      background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 0.5px solid var(--glass-border); border-radius: 12px;
+      display: grid; padding: 10px; box-sizing: border-box;
     }
 
-    .dot { display: block; width: 11px; height: 11px; background: var(--dot-color); border-radius: 50%; align-self: center; justify-self: center; }
-    .face-1 .dot { background: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
+    /* 标准 7 点相对物理面 */
+    .f1 { transform: rotateY(0deg) translateZ(30px); }
+    .f6 { transform: rotateY(180deg) translateZ(30px); }
+    .f3 { transform: rotateY(90deg) translateZ(30px); }
+    .f4 { transform: rotateY(-90deg) translateZ(30px); }
+    .f2 { transform: rotateX(90deg) translateZ(30px); }
+    .f5 { transform: rotateX(-90deg) translateZ(30px); }
 
-    /* 3D 面的位置定義 */
-    .front { transform: rotateY(0deg) translateZ(35px); } .back { transform: rotateY(180deg) translateZ(35px); }
-    .right { transform: rotateY(90deg) translateZ(35px); } .left { transform: rotateY(-90deg) translateZ(35px); }
-    .top { transform: rotateX(90deg) translateZ(35px); } .bottom { transform: rotateX(-90deg) translateZ(35px); }
+    .dot { display: block; width: 9px; height: 9px; background: rgba(255,255,255,0.9); border-radius: 50%; align-self: center; justify-self: center; }
+    .f1 .dot { background: #fff; box-shadow: 0 0 8px #fff; }
 
-    .face-1 { grid-template-areas: "a"; }
-    .face-2 { display: flex; justify-content: space-between; } .face-2 .dot:nth-child(2) { align-self: flex-end; }
-    .face-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
-    .face-3 .dot:nth-child(1) { grid-area: 1/1; } .face-3 .dot:nth-child(2) { grid-area: 2/2; } .face-3 .dot:nth-child(3) { grid-area: 3/3; }
-    .face-4 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-    .face-5 { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; } .face-5 .dot:nth-child(5) { grid-area: 2/2; }
-    .face-6 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
-
-    @keyframes fast-spin { 
-      from { transform: rotateX(0) rotateY(0) rotateZ(0); }
-      to { transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg); } 
+    /* 结果卡片 */
+    #result-box {
+      position: absolute; bottom: 15vh; width: 100%;
+      display: flex; justify-content: center; pointer-events: none;
     }
-
-    .controls { display: flex; gap: 15px; }
-    .glass-btn {
-      background: rgba(255, 255, 255, 0.05); border: 0.5px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      color: #fff; padding: 12px 24px; border-radius: 12px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-text { font-size: 0.75rem; font-weight: 300; letter-spacing: 2px; display: block; }
-    .btn-en { font-size: 0.4rem; opacity: 0.3; text-transform: uppercase; margin-top: 3px; }
-
-    #result { min-height: 180px; margin-top: 30px; }
     .result-card {
-      padding: 25px; border-left: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.01); width: 240px; text-align: left;
-      animation: reveal 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      padding: 20px; border-left: 1px solid #fff;
+      background: rgba(255,255,255,0.02); backdrop-filter: blur(10px);
+      width: 200px; opacity: 0; transform: translateY(20px);
+      transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     }
-    @keyframes reveal { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
-    .food-cn { font-size: 1.4rem; font-weight: 300; letter-spacing: 3px; display: block; }
-    .food-en { font-size: 0.55rem; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px; margin: 4px 0 15px 0; display: block; }
-    .quote-cn { font-size: 0.7rem; opacity: 0.5; font-weight: 200; display: block; line-height: 1.6; }
+    .result-card.show { opacity: 1; transform: translateY(0); }
+
+    /* 按钮 */
+    .btn {
+      position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
+      background: #fff; color: #000; border: none; padding: 12px 40px;
+      border-radius: 30px; font-size: 0.7rem; letter-spacing: 2px;
+      cursor: pointer; z-index: 100;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>命定全餐</h1>
-    <div id="time-indicator" class="sub-head">Detecting Time...</div>
+<div class="header">
+  <h1>PHYSICS ENGINE</h1>
+  <div id="time-tag" style="font-size: 0.4rem; opacity: 0.3; margin-top: 5px;">TIME-AWARE MONOCHROME</div>
+</div>
+
+<div id="world">
+  <div id="d1" class="dice-obj" style="left: 30%; top: 40%;">
+    <div class="cube" id="c1">
+      <div class="f1"><span class="dot"></span></div>
+      <div class="f6" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="f2" style="display:flex; justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
+      <div class="f5" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
+      <div class="f3" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+      <div class="f4" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
   </div>
-  
-  <div class="dice-box">
-    <div class="scene"><div id="cube1" class="cube">
-      <div class="front face-1"><span class="dot"></span></div>
-      <div class="back face-2"><span class="dot"></span><span class="dot"></span></div>
-      <div class="right face-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="left face-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="top face-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="bottom face-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    </div></div>
-    <div class="scene"><div id="cube2" class="cube">
-      <div class="front face-1"><span class="dot"></span></div>
-      <div class="back face-2"><span class="dot"></span><span class="dot"></span></div>
-      <div class="right face-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="left face-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="top face-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-      <div class="bottom face-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    </div></div>
+  <div id="d2" class="dice-obj" style="left: 60%; top: 45%;">
+    <div class="cube" id="c2">
+      <div class="f1"><span class="dot"></span></div>
+      <div class="f6" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="f2" style="display:flex; justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
+      <div class="f5" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
+      <div class="f3" style="display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+      <div class="f4" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
   </div>
+</div>
 
-  <div class="controls">
-    <button class="glass-btn" onclick="rollDice()">
-      <span class="btn-text">擲骰</span><span class="btn-en">Destiny Roll</span>
-    </button>
-  </div>
+<div id="result-box"></div>
+<button class="btn" onclick="throwDice()">SHAKE</button>
 
-  <div id="result"></div>
-  <audio id="diceSound" src="https://www.soundjay.com/misc/sounds/dice-throw-1.mp3"></audio>
+<script>
+  const dice = [
+    { el: document.getElementById('d1'), cube: document.getElementById('c1'), x: 100, y: 300, vx: 0, vy: 0, rx: 0, ry: 0, rz: 0 },
+    { el: document.getElementById('d2'), cube: document.getElementById('c2'), x: 250, y: 350, vx: 0, vy: 0, rx: 0, ry: 0, rz: 0 }
+  ];
 
-  <script>
-    const rotations = [
-      { x: 0, y: 0 }, { x: 0, y: 180 }, { x: 0, y: -90 }, 
-      { x: 0, y: 90 }, { x: -90, y: 0 }, { x: 90, y: 0 }
-    ];
+  const bounce = 0.7; // 弹力系数
+  const friction = 0.98; // 空气摩擦力
+  let isPhysicsActive = false;
 
-    const allMenus = {
-      morning: [
-        { cn: "舒肥雞肉沙拉", en: "SOUS VIDE CHICKEN SALAD", q: "清晨的輕盈節奏。" },
-        { cn: "精品手沖咖啡", en: "POUR OVER COFFEE", q: "喚醒感官的儀式。" },
-        { cn: "日式御飯糰", en: "ONIGIRI SELECTION", q: "樸實的微小幸福。" },
-        { cn: "酪梨吐司", en: "AVOCADO TOAST", q: "健康的油脂藝術。" },
-        { cn: "希臘優格碗", en: "GREEK YOGURT BOWL", q: "純淨的活力補給。" },
-        { cn: "法式歐姆蛋", en: "FRENCH OMELLETE", q: "絲滑柔順的晨間。" },
-        { cn: "台式蛋餅", en: "TAIWANESE EGG CRAPE", q: "巷弄間的日常對白。" },
-        { cn: "貝果夾乳酪", en: "BAGEL WITH CREAM CHEESE", q: "紮實的嚼勁滿足。" },
-        { cn: "美式鬆餅", en: "FLUFFY PANCAKES", q: "甜美雲朵般的開始。" },
-        { cn: "傳統豆漿燒餅", en: "SOY MILK & CLAY OVEN ROLL", q: "經典的中式優雅。" },
-        { cn: "義式帕里尼", en: "ITALIAN PANINI", q: "熱壓後的香氣層次。" },
-        { cn: "港式菠蘿油", en: "PINEAPPLE BUN WITH BUTTER", q: "冰火交融的醇厚。" },
-        { cn: "鮮蔬捲餅", en: "VEGGIE BREAKFAST WRAP", q: "纖維與能量的平衡。" },
-        { cn: "英式早午餐", en: "FULL ENGLISH BREAKFAST", q: "飽滿的豐盛啟程。" },
-        { cn: "水果燕麥片", en: "FRUIT OATMEAL", q: "緩慢釋放的暖意。" }
-      ],
-      noon: [
-        { cn: "商務精緻便當", en: "PREMIUM BENTO", q: "高效能的能量補給。" },
-        { cn: "義大利波隆那麵", en: "PASTA BOLOGNESE", q: "經典風味的沈澱。" },
-        { cn: "紅燒牛肉麵", en: "BEEF NOODLE SOUP", q: "濃郁湯頭的匠心。" },
-        { cn: "海南雞飯", en: "HAINANESE CHICKEN RICE", q: "滑嫩間的南洋涼意。" },
-        { cn: "日式豬排丼", en: "KATSU DON", q: "金黃酥脆的滿足。" },
-        { cn: "泰式打拋豬", en: "THAI BASIL PORK", q: "辛辣開胃的節奏。" },
-        { cn: "美式雙層漢堡", en: "DOUBLE CHEESEBURGER", q: "卡路里的絕對正義。" },
-        { cn: "韓式石鍋拌飯", en: "BIBIMBAP", q: "五彩繽紛的滋味。" },
-        { cn: "夏威夷波奇碗", en: "POKE BOWL", q: "鮮甜海味的原型。" },
-        { cn: "越式炸春捲粉", en: "VIETNAMESE BUN CHA", q: "清爽酸甜的平衡。" },
-        { cn: "印度雞肉咖哩", en: "CHICKEN TIKKA MASALA", q: "辛香料的層次交織。" },
-        { cn: "港式乾炒牛河", en: "STIR-FRIED RICE NOODLES", q: "鍋氣四溢的豪邁。" },
-        { cn: "墨西哥夾餅", en: "TACO SELECTION", q: "熱情洋溢的手感料理。" },
-        { cn: "舒食溫沙拉", en: "WARM GRAIN SALAD", q: "溫暖身心的輕負擔。" },
-        { cn: "法式鹹派", en: "QUICHE LORRAINE", q: "酥脆派皮下的溫柔。" }
-      ],
-      evening: [
-        { cn: "頂級麻辣火鍋", en: "SPICY HOT POT", q: "靜謐中的熱烈沸騰。" },
-        { cn: "職人握壽司", en: "PREMIUM SUSHI", q: "指尖傳遞的時令鮮美。" },
-        { cn: "法式油封鴨腿", en: "DUCK CONFIT", q: "時間醞釀的法式經典。" },
-        { cn: "乾式熟成牛排", en: "DRY-AGED STEAK", q: "濃縮肉香的奢華極致。" },
-        { cn: "日式居酒屋", en: "IZAKAYA STYLE", q: "煙火氣中的夜間漫談。" },
-        { cn: "懷石料理", en: "KAISEKI EXPERIENCE", q: "自然的季節饋贈。" },
-        { cn: "義式手工披薩", en: "WOOD-FIRED PIZZA", q: "炭火烘烤的純粹。" },
-        { cn: "西班牙燉飯", en: "PAELLA SEAFOOD", q: "地中海的陽光濃縮。" },
-        { cn: "韓式部隊鍋", en: "BUDAE JJIGAE", q: "熱氣騰騰的共聚時刻。" },
-        { cn: "粵式片皮鴨", en: "PEKING DUCK", q: "酥脆與鮮嫩的交響。" },
-        { cn: "泰式檸檬魚", en: "STEAMED LEMON FISH", q: "酸辣鮮香的盛宴。" },
-        { cn: "英式威靈頓牛排", en: "BEEF WELLINGTON", q: "酥皮下的優雅包裹。" },
-        { cn: "地中海烤羊排", en: "ROASTED LAMB CHOPS", q: "辛香野性的洗鍊。" },
-        { cn: "黑松露燉飯", en: "TRUFFLE RISOTTO", q: "森林大地的深邃香氣。" },
-        { cn: "經典美式燒烤", en: "BBQ SMOKED RIBS", q: "豪邁奔放的靈魂料理。" }
-      ],
-      midnight: [
-        { cn: "深夜博多拉麵", en: "TONKOTSU RAMEN", q: "靈魂深處的濃厚慰藉。" },
-        { cn: "日式炭火串燒", en: "YAKITORI NIGHT", q: "微醺後的最佳夥伴。" },
-        { cn: "台式鹽酥雞", en: "TAIWANESE FRIED CHICKEN", q: "邪惡卻必要的療癒。" },
-        { cn: "港式生滾粥", en: "CANTONESE CONGEE", q: "暖到心底的溫柔甜美。" },
-        { cn: "韓式炸雞啤酒", en: "CHIMAEK", q: "脆皮與泡沫的狂歡。" },
-        { cn: "美式深夜肉醬薯條", en: "CHILI FRIES", q: "放縱的最後一哩路。" },
-        { cn: "特製牛肉炒麵", en: "FRIED NOODLES", q: "鍋氣渲染的午夜夢迴。" },
-        { cn: "宵夜清粥小菜", en: "CONGEE & SMALL DISHES", q: "平凡中的安定感。" },
-        { cn: "義式起司拼盤", en: "CHEESE PLATTER", q: "搭配紅酒的優雅尾聲。" },
-        { cn: "深夜三明治", en: "NIGHT CLUB SANDWICH", q: "層次分明的冷餐時光。" },
-        { cn: "墨西哥起司薄餅", en: "QUESADILLA", q: "濃郁起司的鹹香誘惑。" },
-        { cn: "永和豆漿", en: "YONGHE SOY MILK", q: "跨越時空的深夜經典。" },
-        { cn: "關東煮", en: "ODEN SELECTION", q: "清澈湯汁裡的暖意。" },
-        { cn: "深夜甜點盤", en: "DESSERT DEGUSTATION", q: "給這一天一個甜美句點。" },
-        { cn: "現做熱壓吐司", en: "HOT PRESSED TOAST", q: "簡單卻極致的香脆。" }
-      ]
-    };
+  function throwDice() {
+    if(isPhysicsActive) return;
+    isPhysicsActive = true;
+    document.getElementById('result-box').innerHTML = "";
 
-    let rolling = false;
+    dice.forEach(d => {
+      d.vx = (Math.random() - 0.5) * 40;
+      d.vy = (Math.random() - 0.5) * 40;
+    });
+    update();
+  }
 
-    function getTimedMenu() {
-      const hour = new Date().getHours();
-      const indicator = document.getElementById("time-indicator");
-      
-      if (hour >= 5 && hour < 11) {
-        indicator.innerText = "Morning Selection";
-        return allMenus.morning;
-      } else if (hour >= 11 && hour < 16) {
-        indicator.innerText = "Lunch Selection";
-        return allMenus.noon;
-      } else if (hour >= 22 || hour < 5) {
-        indicator.innerText = "Midnight Selection";
-        return allMenus.midnight;
-      } else {
-        indicator.innerText = "Dinner Selection";
-        return allMenus.evening;
-      }
+  function update() {
+    let totalSpeed = 0;
+
+    dice.forEach(d => {
+      // 物理位移
+      d.x += d.vx;
+      d.y += d.vy;
+
+      // 碰撞检测：屏幕边界
+      if (d.x < 0 || d.x > window.innerWidth - 60) { d.vx *= -bounce; d.x = d.x < 0 ? 0 : window.innerWidth - 60; }
+      if (d.y < 0 || d.y > window.innerHeight - 60) { d.vy *= -bounce; d.y = d.y < 0 ? 0 : window.innerHeight - 60; }
+
+      // 摩擦力
+      d.vx *= friction;
+      d.vy *= friction;
+
+      // 旋转表现（旋转速度与位移速度挂钩）
+      d.rx += d.vy * 5;
+      d.ry += d.vx * 5;
+
+      d.el.style.transform = `translate3d(${d.x}px, ${d.y}px, 0)`;
+      d.cube.style.transform = `rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
+
+      totalSpeed += Math.abs(d.vx) + Math.abs(d.vy);
+    });
+
+    if (totalSpeed > 0.5) {
+      requestAnimationFrame(update);
+    } else {
+      finalize();
     }
+  }
 
-    // 初始化顯示時段
-    getTimedMenu();
+  const pointRots = {
+    1: [0, 0], 2: [-90, 0], 3: [0, -90], 4: [0, 90], 5: [90, 0], 6: [0, 180]
+  };
 
-    function rollDice() {
-      if (rolling) return;
-      rolling = true;
-      document.getElementById("diceSound").play().catch(()=>{});
-      document.getElementById("result").innerHTML = "";
+  function finalize() {
+    dice.forEach(d => {
+      const point = Math.floor(Math.random() * 6) + 1;
+      const rot = pointRots[point];
+      d.cube.style.transition = "transform 0.8s ease-out";
+      d.cube.style.transform = `rotateX(${rot[0]}deg) rotateY(${rot[1]}deg)`;
+    });
 
-      const c1 = document.getElementById("cube1");
-      const c2 = document.getElementById("cube2");
-      c1.style.animation = `fast-spin 0.3s infinite linear`;
-      c2.style.animation = `fast-spin 0.4s infinite linear`;
-
-      setTimeout(() => {
-        stopCube(c1, 0);
-        stopCube(c2, 180);
-
-        const currentMenu = getTimedMenu();
-        const choice = currentMenu[Math.floor(Math.random() * currentMenu.length)];
-        
-        setTimeout(() => {
-          document.getElementById("result").innerHTML = `
-            <div class="result-card">
-              <span class="food-cn">${choice.cn}</span>
-              <span class="food-en">${choice.en}</span>
-              <span class="quote-cn">${choice.q}</span>
-            </div>
-          `;
-          rolling = false;
-        }, 1100);
-      }, 700);
-    }
-
-    function stopCube(cube, delay) {
-      setTimeout(() => {
-        cube.style.animation = "none";
-        const r = Math.floor(Math.random() * 6);
-        const offset = 1440;
-        cube.style.transition = `transform 1.3s cubic-bezier(0.19, 1, 0.22, 1)`;
-        cube.style.transform = `rotateX(${rotations[r].x + offset}deg) rotateY(${rotations[r].y + offset}deg)`;
-      }, delay);
-    }
-  </script>
+    setTimeout(() => {
+      const card = document.createElement('div');
+      card.className = "result-card";
+      card.innerHTML = `<span style="font-size:1.2rem; letter-spacing:2px;">深夜食堂</span><br><span style="font-size:0.6rem; opacity:0.4;">MIDNIGHT DINER</span>`;
+      document.getElementById('result-box').appendChild(card);
+      setTimeout(() => card.classList.add('show'), 50);
+      isPhysicsActive = false;
+    }, 800);
+  }
+</script>
 </body>
 </html>
