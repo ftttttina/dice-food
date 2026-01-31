@@ -1,130 +1,143 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>DESTINY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DESTINY DINNER - COMPLETE</title>
   <style>
-    :root { --accent: #fff; --sub: rgba(255,255,255,0.3); }
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: "SF Pro Display", -apple-system, sans-serif; color: var(--accent); }
+    :root { --bg: #000; --light-x: 50%; --light-y: 50%; }
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: "SF Pro Display", -apple-system, sans-serif; color: #fff; }
 
     #ambient {
       position: absolute; width: 100%; height: 100%;
-      background: radial-gradient(circle at 50% 50%, #161618 0%, #000 100%);
+      background: radial-gradient(circle at var(--light-x) var(--light-y), rgba(255,255,255,0.1) 0%, transparent 60%),
+                  radial-gradient(circle at 50% 50%, #121214 0%, #000 90%);
       z-index: 1; pointer-events: none;
     }
 
-    /* 文字排版：縮小並加大字間距 */
-    .header { position: absolute; top: 12vh; width: 100%; text-align: center; z-index: 100; pointer-events: none; }
-    h1 { font-weight: 200; font-size: 0.65rem; letter-spacing: 12px; margin: 0; opacity: 0.5; text-indent: 12px; }
-    
-    #p-wrap { width: 30px; height: 1px; background: rgba(255,255,255,0.1); margin: 25px auto; opacity: 0; transition: 0.5s; }
-    #p-bar { width: 0%; height: 100%; background: #fff; }
+    .header { position: absolute; top: 6vh; width: 100%; text-align: center; z-index: 100; pointer-events: none; }
+    h1 { font-weight: 200; font-size: 0.9rem; letter-spacing: 12px; margin: 0; opacity: 0.8; }
+    .sub-title { font-size: 0.4rem; letter-spacing: 4px; opacity: 0.3; margin-top: 5px; text-transform: uppercase; }
+
+    /* 進度時間線 */
+    #timeline-wrap { position: absolute; top: 14vh; width: 100%; display: flex; justify-content: center; opacity: 0; transition: 0.5s; z-index: 100; }
+    #timeline-bar { width: 80px; height: 1px; background: rgba(255,255,255,0.1); }
+    #timeline-inner { width: 0%; height: 100%; background: #fff; }
 
     #world { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
-    .dice-obj { position: absolute; width: 48px; height: 48px; perspective: 800px; transition: opacity 0.5s; }
+    .dice-obj { position: absolute; width: 62px; height: 62px; perspective: 1000px; }
     .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
     .cube div {
-      position: absolute; width: 48px; height: 48px; background: rgba(255,255,255,0.02);
-      backdrop-filter: blur(6px); border: 0.5px solid rgba(255,255,255,0.12); border-radius: 10px;
-      display: flex; justify-content: center; align-items: center;
+      position: absolute; width: 62px; height: 62px; background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px;
+      display: grid; padding: 10px; box-sizing: border-box;
     }
-    .dot { width: 7px; height: 7px; background: #fff; border-radius: 50%; opacity: 0.8; box-shadow: 0 0 5px #fff; }
+    .dot { width: 10px; height: 10px; background: #fff; border-radius: 50%; align-self: center; justify-self: center; box-shadow: 0 0 8px #fff; }
     
-    .f1{transform:rotateY(0deg)translateZ(24px)}.f6{transform:rotateY(180deg)translateZ(24px)}
-    .f2{transform:rotateX(90deg)translateZ(24px)}.f5{transform:rotateX(-90deg)translateZ(24px)}
-    .f3{transform:rotateY(90deg)translateZ(24px)}.f4{transform:rotateY(-90deg)translateZ(24px)}
+    .f1{transform:rotateY(0deg)translateZ(31px)}.f6{transform:rotateY(180deg)translateZ(31px)}.f2{transform:rotateX(90deg)translateZ(31px)}.f5{transform:rotateX(-90deg)translateZ(31px)}.f3{transform:rotateY(90deg)translateZ(31px)}.f4{transform:rotateY(-90deg)translateZ(31px)}
 
-    /* 結果區 */
-    .result-container { position: absolute; top: 40%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
-    #f-cn { font-size: 1.4rem; font-weight: 100; letter-spacing: 8px; margin: 0; opacity: 0; transition: 1.5s; text-indent: 8px; }
-    #f-en { font-size: 0.55rem; opacity: 0; margin-top: 15px; letter-spacing: 3px; color: var(--sub); text-transform: uppercase; }
+    .result-container { position: absolute; top: 38%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
+    #food-cn { font-size: 2.2rem; font-weight: 200; letter-spacing: 8px; margin: 0; opacity: 0; transition: 1.2s; }
+    #food-en { font-size: 0.7rem; opacity: 0; margin-top: 10px; letter-spacing: 4px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
     
-    #map-link {
-      display: inline-block; margin-top: 45px; padding: 8px 20px;
-      font-size: 0.5rem; letter-spacing: 2px; opacity: 0; transition: 1s; 
-      pointer-events: auto; cursor: pointer; color: var(--sub); text-decoration: none; border-bottom: 0.5px solid rgba(255,255,255,0.1);
+    #map-btn {
+      display: inline-flex; flex-direction: column; align-items: center;
+      margin-top: 30px; padding: 12px 30px; border-radius: 30px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+      opacity: 0; transform: translateY(20px); transition: 0.8s; pointer-events: auto; cursor: pointer;
     }
-    #map-link.show { opacity: 1; }
+    #map-btn.show { opacity: 1; transform: translateY(0); }
 
-    /* 按鈕：極簡化 */
-    .controls { position: absolute; bottom: 12vh; width: 100%; display: flex; justify-content: center; gap: 50px; z-index: 101; }
-    .btn { background: transparent; border: none; color: rgba(255,255,255,0.3); cursor: pointer; text-align: center; transition: 0.3s; }
-    .btn span { display: block; font-size: 0.55rem; letter-spacing: 3px; }
-    .btn.active { color: #fff; }
+    .controls { position: absolute; bottom: 8vh; width: 100%; display: flex; justify-content: center; gap: 15px; z-index: 101; }
+    .btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px 25px; border-radius: 40px; cursor: pointer; min-width: 110px; text-align: center; transition: 0.3s; }
+    .btn span { display: block; }
+    .btn span:first-child { font-size: 0.7rem; letter-spacing: 2px; }
+    .btn span:last-child { font-size: 0.35rem; opacity: 0.4; margin-top: 2px; }
+    .btn.active { background: #fff; color: #000; }
   </style>
 </head>
 <body>
 
 <div id="ambient"></div>
 <div class="header">
-    <h1>DESTINY DINNER</h1>
-    <div id="p-wrap"><div id="p-bar"></div></div>
+    <h1>命定全餐</h1>
+    <div class="sub-title">DESTINY DINNER</div>
+    <div id="timeline-wrap"><div id="timeline-bar"><div id="timeline-inner"></div></div></div>
 </div>
 
 <div id="world">
   <div id="d1" class="dice-obj"><div class="cube" id="c1">
-    <div class="f1"><span class="dot"></span></div><div class="f6"><span class="dot"></span></div>
-    <div class="f2"><span class="dot"></span></div><div class="f5"><span class="dot"></span></div>
-    <div class="f3"><span class="dot"></span></div><div class="f4"><span class="dot"></span></div>
+    <div class="f1"><span class="dot"></span></div>
+    <div class="f6" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f2" style="display:flex;justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
+    <div class="f5" style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
+    <div class="f3" style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+    <div class="f4" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div></div>
-  <div id="d2" class="dice-obj"><div class="cube" id="c2">
-    <div class="f1"><span class="dot"></span></div><div class="f6"><span class="dot"></span></div>
-    <div class="f2"><span class="dot"></span></div><div class="f5"><span class="dot"></span></div>
-    <div class="f3"><span class="dot"></span></div><div class="f4"><span class="dot"></span></div>
+  <div id="d2" class="dice-obj" style="left:180px; top:350px;"><div class="cube" id="c2">
+    <div class="f1"><span class="dot"></span></div>
+    <div class="f6" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f2" style="display:flex;justify-content:space-between;"><span class="dot"></span><span class="dot" style="align-self:flex-end"></span></div>
+    <div class="f5" style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot" style="grid-area:2/2"></span></div>
+    <div class="f3" style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;"><span class="dot" style="grid-area:1/1"></span><span class="dot" style="grid-area:2/2"></span><span class="dot" style="grid-area:3/3"></span></div>
+    <div class="f4" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div></div>
 </div>
 
 <div class="result-container">
-  <h2 id="f-cn"></h2>
-  <div id="f-en"></div>
-  <a id="map-link">EXPLORE NEARBY</a>
+  <h2 id="food-cn"></h2>
+  <div id="food-en"></div>
+  <div id="map-btn">
+    <span>探索附近餐館</span>
+    <span>EXPLORE NEARBY</span>
+  </div>
 </div>
 
 <div class="controls">
-  <div class="btn" onclick="shake()"><span>SHAKE</span></div>
-  <div class="btn" id="mBtn" onclick="toggleMotion()"><span>MOTION</span></div>
+  <button class="btn" onclick="shake()"><span>擲骰</span><span>SHAKE</span></button>
+  <button class="btn" id="mBtn" onclick="toggleMotion()"><span>體感</span><span>MOTION</span></button>
 </div>
 
 <script>
+  // --- 完整菜單數據 ---
   const menu = {
-    morning: [{cn:"酪梨吐司", en:"Avocado Toast"}, {cn:"精品手沖", en:"Filter Coffee"}, {cn:"希臘優格", en:"Greek Yogurt"}],
-    noon: [{cn:"職人漢堡", en:"Craft Burger"}, {cn:"海南雞飯", en:"Chicken Rice"}, {cn:"夏威夷碗", en:"Poke Bowl"}],
-    evening: [{cn:"熟成牛排", en:"Aged Steak"}, {cn:"麻辣火鍋", en:"Spicy Pot"}, {cn:"居酒屋盛合", en:"Izakaya Set"}],
-    midnight: [{cn:"深夜拉麵", en:"Midnight Ramen"}, {cn:"鹽酥雞", en:"Fried Chicken"}, {cn:"關東煮", en:"Oden"}]
+    morning: [
+        {cn:"舒肥雞沙拉", en:"Sous Vide Salad"}, {cn:"精品手沖", en:"Pour Over"}, {cn:"酪梨吐司", en:"Avocado Toast"}, {cn:"日式飯糰", en:"Onigiri"}, {cn:"希臘優格", en:"Greek Yogurt"},
+        {cn:"台式蛋餅", en:"Taiwanese Omelet"}, {cn:"法式吐司", en:"French Toast"}, {cn:"班尼迪克蛋", en:"Eggs Benedict"}, {cn:"貝果乳酪", en:"Bagel & Cream Cheese"}, {cn:"鮮蔬捲餅", en:"Veggie Wrap"}
+    ],
+    noon: [
+        {cn:"牛肉麵", en:"Beef Noodles"}, {cn:"海南雞飯", en:"Chicken Rice"}, {cn:"石鍋拌飯", en:"Bibimbap"}, {cn:"夏威夷碗", en:"Poke Bowl"}, {cn:"日式豬排", en:"Tonkatsu"},
+        {cn:"泰式打拋豬", en:"Thai Basil Pork"}, {cn:"職人漢堡", en:"Craft Burger"}, {cn:"越南河粉", en:"Pho"}, {cn:"印度咖哩", en:"Indian Curry"}, {cn:"義大利麵", en:"Pasta"}
+    ],
+    evening: [
+        {cn:"熟成牛排", en:"Aged Steak"}, {cn:"麻辣火鍋", en:"Spicy Hotpot"}, {cn:"職人壽司", en:"Premium Sushi"}, {cn:"油封鴨", en:"Duck Confit"}, {cn:"居酒屋盛合", en:"Izakaya Set"},
+        {cn:"西班牙燉飯", en:"Paella"}, {cn:"韓式部隊鍋", en:"Army Stew"}, {cn:"地中海烤魚", en:"Grilled Fish"}, {cn:"手工披薩", en:"Handmade Pizza"}, {cn:"懷石料理", en:"Kaiseki"}
+    ],
+    midnight: [
+        {cn:"深夜拉麵", en:"Midnight Ramen"}, {cn:"鹽酥雞", en:"Fried Chicken"}, {cn:"串燒盛合", en:"Yakitori Set"}, {cn:"永和豆漿", en:"Soy Milk Set"}, {cn:"韓式炸雞", en:"Chimaek"},
+        {cn:"熱壓吐司", en:"Panini"}, {cn:"關東煮", en:"Oden"}, {cn:"清粥小菜", en:"Rice Porridge"}, {cn:"牛肉炒麵", en:"Stir-fried Noodles"}, {cn:"肉醬薯條", en:"Poutine"}
+    ]
   };
 
-  const dSize = 48;
-  const gap = 15; // 初始並排間距
   let dice = [
-    { el: document.getElementById('d1'), c: document.getElementById('c1'), x: 0, y: 0, vx: 0, vy: 0, rx: 0, ry: 0 },
-    { el: document.getElementById('d2'), c: document.getElementById('c2'), x: 0, y: 0, vx: 0, vy: 0, rx: 0, ry: 0 }
+    { el: document.getElementById('d1'), c: document.getElementById('c1'), x: 80, y: 300, vx: 0, vy: 0, rx: 0, ry: 0 },
+    { el: document.getElementById('d2'), c: document.getElementById('c2'), x: 220, y: 380, vx: 0, vy: 0, rx: 0, ry: 0 }
   ];
   
-  // 初始位置：並排置中
-  function setInitial() {
-    const midX = window.innerWidth / 2;
-    const midY = window.innerHeight / 2;
-    dice[0].x = midX - dSize - gap;
-    dice[0].y = midY - dSize/2;
-    dice[1].x = midX + gap;
-    dice[1].y = midY - dSize/2;
-    updateDiceUI();
-  }
-  window.addEventListener('resize', setInitial);
-  setInitial();
+  let isRolling = false, useMotion = false, gX = 0, gY = 0, currentFriction = 0.98;
+  let currentFood = "";
 
-  let isRolling = false, useMotion = false, gX = 0, gY = 0;
+  function haptic(ms = 15) { if(navigator.vibrate) navigator.vibrate(ms); }
 
   function shake() {
-    isRolling = true;
-    document.getElementById('f-cn').style.opacity = 0;
-    document.getElementById('f-en').style.opacity = 0;
-    document.getElementById('map-link').classList.remove('show');
-    document.getElementById('p-wrap').style.opacity = 1;
+    isRolling = true; currentFriction = 0.98; haptic(20);
+    document.getElementById('food-cn').style.opacity = 0;
+    document.getElementById('food-en').style.opacity = 0;
+    document.getElementById('map-btn').classList.remove('show');
     dice.forEach(d => {
-      d.vx = (Math.random() - 0.5) * 70;
-      d.vy = (Math.random() - 0.5) * 70;
+      d.vx = (Math.random() - 0.5) * 75;
+      d.vy = (Math.random() - 0.5) * 75;
+      d.rx = Math.random() * 360; d.ry = Math.random() * 360;
     });
   }
 
@@ -143,33 +156,69 @@
     useMotion = true; document.getElementById('mBtn').classList.add('active');
     window.addEventListener('deviceorientation', e => {
       if(useMotion) { 
-        gX = e.gamma / 15; gY = e.beta / 15; 
-        if(Math.abs(gX) + Math.abs(gY) > 1.8) { isRolling = true; document.getElementById('f-cn').style.opacity = 0; }
+        gX = e.gamma / 12; gY = e.beta / 12; 
+        if(Math.abs(gX) + Math.abs(gY) > 0.8) { isRolling = true; currentFriction = 0.98; document.getElementById('food-cn').style.opacity = 0; }
       }
     });
   }
 
-  function updateDiceUI() {
-    dice.forEach(d => {
-      d.el.style.transform = `translate3d(${d.x}px, ${d.y}px, 0)`;
-      d.c.style.transform = `rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
-    });
-  }
-
   function update() {
-    let totalEnergy = 0;
-    const bounce = 0.4;
-    const friction = 0.975;
+    let energy = 0;
+    
+    // 碰撞偵測
+    let dx = dice[1].x - dice[0].x, dy = dice[1].y - dice[0].y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist < 62) {
+        dice[0].vx -= dx*0.1; dice[0].vy -= dy*0.1;
+        dice[1].vx += dx*0.1; dice[1].vy += dy*0.1;
+        if(Math.abs(dice[0].vx)>5) haptic(10);
+    }
+
+    if(isRolling && Math.abs(gX) + Math.abs(gY) < 0.3) currentFriction *= 0.994;
 
     dice.forEach(d => {
       d.vx += gX; d.vy += gY;
-      d.vx *= friction; d.vy *= friction;
+      d.vx *= currentFriction; d.vy *= currentFriction;
       d.x += d.vx; d.y += d.vy;
+      if(d.x < 0 || d.x > window.innerWidth-62) { d.vx *= -0.6; d.x = d.x<0?0:window.innerWidth-62; haptic(5); }
+      if(d.y < 0 || d.y > window.innerHeight-62) { d.vy *= -0.6; d.y = d.y<0?0:window.innerHeight-62; haptic(5); }
+      d.rx += d.vy * 4; d.ry += d.vx * 4;
+      d.el.style.transform = `translate3d(${d.x}px, ${d.y}px, 0)`;
+      d.c.style.transform = `rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
+      energy += Math.abs(d.vx) + Math.abs(d.vy);
+    });
 
-      // 嚴格螢幕邊界鎖定
-      if(d.x < 0) { d.x = 0; d.vx *= -bounce; }
-      if(d.x > window.innerWidth - dSize) { d.x = window.innerWidth - dSize; d.vx *= -bounce; }
-      if(d.y < 0) { d.y = 0; d.vy *= -bounce; }
-      if(d.y > window.innerHeight - dSize) { d.y = window.innerHeight - dSize; d.vy *= -bounce; }
+    document.body.style.setProperty('--light-x', `${(dice[0].x / window.innerWidth)*100}%`);
+    document.body.style.setProperty('--light-y', `${(dice[0].y / window.innerHeight)*100}%`);
 
-      d.rx += d.vy * 5; d.ry += d.vx
+    if(isRolling) {
+      document.getElementById('timeline-wrap').style.opacity = 1;
+      document.getElementById('timeline-inner').style.width = Math.min(100, energy*2) + "%";
+      if(energy < 0.3) { isRolling = false; showResult(); }
+    } else { document.getElementById('timeline-wrap').style.opacity = 0; }
+
+    requestAnimationFrame(update);
+  }
+
+  function showResult() {
+    const hr = new Date().getHours();
+    let key = (hr >= 5 && hr < 11) ? "morning" : (hr >= 11 && hr < 17) ? "noon" : (hr >= 22 || hr < 5) ? "midnight" : "evening";
+    const item = menu[key][Math.floor(Math.random() * menu[key].length)];
+    
+    currentFood = item.cn;
+    const cn = document.getElementById('food-cn');
+    const en = document.getElementById('food-en');
+    cn.innerText = item.cn; en.innerText = item.en;
+    cn.style.opacity = 1; en.style.opacity = 1;
+    haptic([30, 50, 30]);
+    setTimeout(() => document.getElementById('map-btn').classList.add('show'), 600);
+  }
+
+  document.getElementById('map-btn').onclick = () => {
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(currentFood)}+restaurant+nearby/`, '_blank');
+  };
+
+  update();
+</script>
+</body>
+</html>
