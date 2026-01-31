@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DESTINY DINNER - HAPTIC PRO</title>
+  <title>DESTINY - COLLISION PRO</title>
   <style>
     :root { --bg: #000; --light-x: 50%; --light-y: 50%; }
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: "SF Pro Display", -apple-system, sans-serif; color: #fff; }
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: "SF Pro Display", sans-serif; color: #fff; }
+
+    /* 牆壁閃爍效果 (iPhone 震動補償) */
+    #flash { position: absolute; width: 100%; height: 100%; background: #fff; opacity: 0; z-index: 99; pointer-events: none; }
 
     #ambient {
       position: absolute; width: 100%; height: 100%;
@@ -15,45 +18,45 @@
       z-index: 1; pointer-events: none;
     }
 
-    .header { position: absolute; top: 8vh; width: 100%; text-align: center; z-index: 100; pointer-events: none; }
+    .header { position: absolute; top: 6vh; width: 100%; text-align: center; z-index: 100; pointer-events: none; }
     h1 { font-weight: 200; font-size: 0.9rem; letter-spacing: 12px; margin: 0; opacity: 0.9; }
-    .sub-title { font-size: 0.4rem; letter-spacing: 4px; opacity: 0.3; margin-top: 5px; text-transform: uppercase; }
+
+    /* 進度條 */
+    #progress-wrap { position: absolute; top: 15vh; width: 100%; display: flex; justify-content: center; opacity: 0; transition: 0.5s; z-index: 100; }
+    #progress-bar { width: 100px; height: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
+    #progress-inner { width: 0%; height: 100%; background: #fff; }
 
     #world { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
-    .dice-obj { position: absolute; width: 62px; height: 62px; perspective: 1000px; }
-    .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
+    .dice-obj { position: absolute; width: 62px; height: 62px; perspective: 1000px; left:0; top:0; }
+    .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.1s linear; }
     .cube div {
       position: absolute; width: 62px; height: 62px; background: rgba(255,255,255,0.06);
       backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px;
       display: grid; padding: 10px; box-sizing: border-box;
     }
     .dot { width: 10px; height: 10px; background: #fff; border-radius: 50%; align-self: center; justify-self: center; box-shadow: 0 0 10px #fff; }
-    .f1 { transform: rotateY(0deg) translateZ(31px); }
-    .f6 { transform: rotateY(180deg) translateZ(31px); }
-    .f2 { transform: rotateX(90deg) translateZ(31px); }
-    .f5 { transform: rotateX(-90deg) translateZ(31px); }
-    .f3 { transform: rotateY(90deg) translateZ(31px); }
-    .f4 { transform: rotateY(-90deg) translateZ(31px); }
+
+    /* 3D 面定義... (與之前相同) */
+    .f1 { transform: rotateY(0deg) translateZ(31px); } .f6 { transform: rotateY(180deg) translateZ(31px); }
+    .f2 { transform: rotateX(90deg) translateZ(31px); } .f5 { transform: rotateX(-90deg) translateZ(31px); }
+    .f3 { transform: rotateY(90deg) translateZ(31px); } .f4 { transform: rotateY(-90deg) translateZ(31px); }
 
     .result-container { position: absolute; top: 40%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
     #food-cn { font-size: 2.2rem; font-weight: 200; letter-spacing: 8px; margin: 0; opacity: 0; transition: 1s; }
-    #food-en { font-size: 0.7rem; opacity: 0; margin-top: 10px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.4); transition: 1.5s; }
+    #food-en { font-size: 0.7rem; opacity: 0; margin-top: 10px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
 
     .controls { position: absolute; bottom: 8vh; width: 100%; display: flex; justify-content: center; gap: 15px; z-index: 101; }
-    .btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 28px; border-radius: 40px; cursor: pointer; backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; min-width: 120px; transition: 0.3s; }
-    .btn span:first-child { font-size: 0.7rem; letter-spacing: 2px; }
-    .btn span:last-child { font-size: 0.35rem; opacity: 0.5; margin-top: 2px; letter-spacing: 1px; }
-    .btn.active { background: #fff; color: #000; }
+    .btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 28px; border-radius: 40px; cursor: pointer; backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; min-width: 120px; }
   </style>
 </head>
 <body>
 
+<div id="flash"></div>
 <div id="ambient"></div>
 
 <div class="header">
   <h1>命定全餐</h1>
-  <div class="sub-title">DESTINY DINNER</div>
-  <div id="status-tag" style="font-size: 0.35rem; opacity: 0.2; margin-top: 15px; letter-spacing: 2px;">WAITING / 待機中</div>
+  <div id="progress-wrap"><div id="progress-bar"><div id="progress-inner"></div></div></div>
 </div>
 
 <div id="world">
@@ -81,109 +84,102 @@
 </div>
 
 <div class="controls">
-  <button class="btn" onclick="shake()">
-    <span>擲骰</span>
-    <span>SHAKE</span>
-  </button>
-  <button class="btn" id="motionBtn" onclick="toggleMotion()">
-    <span id="m-text">體感模式: 關</span>
-    <span id="m-sub">MOTION: OFF</span>
-  </button>
+  <button class="btn" onclick="shake()"><span>擲骰 / SHAKE</span></button>
+  <button class="btn" id="motionBtn" onclick="toggleMotion()"><span>體感 / MOTION</span></button>
 </div>
 
 <script>
-  const menu = {
-    morning: [{cn: "舒肥雞沙拉", en: "Sous Vide Chicken Salad"}, {cn: "精品手沖", en: "Pourover Coffee"}, {cn: "酪梨吐司", en: "Avocado Toast"}],
-    noon: [{cn: "紅燒牛肉麵", en: "Beef Noodle Soup"}, {cn: "海南雞飯", en: "Hainanese Chicken Rice"}, {cn: "職人漢堡", en: "Craft Burger"}],
-    evening: [{cn: "熟成牛排", en: "Dry-Aged Steak"}, {cn: "麻辣火鍋", en: "Spicy Hotpot"}, {cn: "職人壽司", en: "Omakase Sushi"}],
-    midnight: [{cn: "深夜拉麵", en: "Midnight Ramen"}, {cn: "鹽酥雞", en: "Fried Chicken"}, {cn: "炸雞啤酒", en: "Chimaek Set"}]
-  };
-
   let dice = [
-    { el: document.getElementById('d1'), c: document.getElementById('c1'), x: 80, y: 250, vx: 0, vy: 0, rx: 0, ry: 0 },
-    { el: document.getElementById('d2'), c: document.getElementById('c2'), x: 220, y: 300, vx: 0, vy: 0, rx: 0, ry: 0 }
+    { el: document.getElementById('d1'), c: document.getElementById('c1'), x: 80, y: 300, vx: 0, vy: 0, rx: 0, ry: 0, rad: 31 },
+    { el: document.getElementById('d2'), c: document.getElementById('c2'), x: 220, y: 350, vx: 0, vy: 0, rx: 0, ry: 0, rad: 31 }
   ];
 
   let useMotion = false, gX = 0, gY = 0, isRolling = false;
-  const bounce = 0.6, friction = 0.98;
+  const bounce = 0.7, friction = 0.98;
 
-  function haptic() {
-    if (navigator.vibrate) navigator.vibrate(15);
+  function visualVibrate() {
+    const f = document.getElementById('flash');
+    f.style.opacity = "0.15";
+    setTimeout(() => f.style.opacity = "0", 40);
   }
 
   function shake() {
     isRolling = true;
-    haptic(); // 點擊時初次反饋
     document.getElementById('food-cn').style.opacity = 0;
-    document.getElementById('food-en').style.opacity = 0;
-    document.getElementById('status-tag').innerText = "ROLLING... / 命定中...";
-    dice.forEach(d => { d.vx += (Math.random()-0.5)*60; d.vy += (Math.random()-0.5)*60; });
+    document.getElementById('progress-wrap').style.opacity = 1;
+    dice.forEach(d => { d.vx += (Math.random()-0.5)*70; d.vy += (Math.random()-0.5)*70; });
   }
 
   function toggleMotion() {
-    haptic();
-    if (!useMotion) {
-      if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission().then(s => { if(s==='granted') startMotion(); });
-      } else { startMotion(); }
-    } else {
-      useMotion = false; gX = 0; gY = 0;
-      document.getElementById('m-text').innerText = "體感模式: 關";
-      document.getElementById('m-sub').innerText = "MOTION: OFF";
-      document.getElementById('motionBtn').classList.remove('active');
-    }
+    if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().then(s => { if(s==='granted') startMotion(); });
+    } else { startMotion(); }
   }
 
   function startMotion() {
     useMotion = true;
-    document.getElementById('m-text').innerText = "體感模式: 開";
-    document.getElementById('m-sub').innerText = "MOTION: ON";
-    document.getElementById('motionBtn').classList.add('active');
-    window.addEventListener('deviceorientation', e => { if(useMotion){ gX = e.gamma/15; gY = e.beta/15; } });
+    document.getElementById('motionBtn').style.background = "#fff";
+    document.getElementById('motionBtn').style.color = "#000";
+    window.addEventListener('deviceorientation', e => { if(useMotion){ gX = e.gamma/12; gY = e.beta/12; } });
   }
 
   function update() {
-    let speed = 0;
+    let energy = 0;
+    
+    // 1. 處理物體間碰撞 (防止重疊)
+    let dx = dice[1].x - dice[0].x;
+    let dy = dice[1].y - dice[0].y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    let minDist = dice[0].rad + dice[1].rad;
+    
+    if (dist < minDist) {
+      let angle = Math.atan2(dy, dx);
+      let tx = dice[0].x + Math.cos(angle) * minDist;
+      let ty = dice[0].y + Math.sin(angle) * minDist;
+      let ax = (tx - dice[1].x) * 0.5;
+      let ay = (ty - dice[1].y) * 0.5;
+      dice[0].vx -= ax; dice[0].vy -= ay;
+      dice[1].vx += ax; dice[1].vy += ay;
+    }
+
+    // 2. 處理牆壁碰撞與移動
     dice.forEach(d => {
-      d.vx += gX; d.vy += gY; d.vx *= friction; d.vy *= friction;
+      d.vx += gX; d.vy += gY;
+      d.vx *= friction; d.vy *= friction;
       d.x += d.vx; d.y += d.vy;
 
-      // 碰撞偵測 + 震動回饋
-      let hit = false;
-      if(d.x < 0) { d.x = 0; d.vx *= -bounce; hit = true; }
-      if(d.x > window.innerWidth-62) { d.x = window.innerWidth-62; d.vx *= -bounce; hit = true; }
-      if(d.y < 0) { d.y = 0; d.vy *= -bounce; hit = true; }
-      if(d.y > window.innerHeight-62) { d.y = window.innerHeight-62; d.vy *= -bounce; hit = true; }
-
-      if(hit && Math.abs(d.vx) + Math.abs(d.vy) > 5) haptic();
+      if(d.x < 0 || d.x > window.innerWidth-62) { 
+        d.vx *= -bounce; d.x = d.x<0?0:window.innerWidth-62; 
+        if(Math.abs(d.vx)>5) visualVibrate();
+      }
+      if(d.y < 0 || d.y > window.innerHeight-62) { 
+        d.vy *= -bounce; d.y = d.y<0?0:window.innerHeight-62; 
+        if(Math.abs(d.vy)>5) visualVibrate();
+      }
 
       d.rx += d.vy * 3; d.ry += d.vx * 3;
       d.el.style.transform = `translate3d(${d.x}px, ${d.y}px, 0)`;
       d.c.style.transform = `rotateX(${d.rx}deg) rotateY(${d.ry}deg)`;
-      speed += Math.abs(d.vx) + Math.abs(d.vy);
+      energy += Math.abs(d.vx) + Math.abs(d.vy);
     });
 
-    document.body.style.setProperty('--light-x', `${(dice[0].x / window.innerWidth)*100}%`);
-    document.body.style.setProperty('--light-y', `${(dice[0].y / window.innerHeight)*100}%`);
+    // 3. 更新進度條
+    if(isRolling) {
+      let prog = Math.min(100, energy * 2);
+      document.getElementById('progress-inner').style.width = prog + "%";
+      if (energy < 0.4) { isRolling = false; showResult(); }
+    }
 
-    if (isRolling && speed < 0.4) { isRolling = false; showResult(); }
     requestAnimationFrame(update);
   }
 
   function showResult() {
-    const hr = new Date().getHours();
-    let list = menu.evening, tag = "Dinner / 晚膳";
-    if(hr >= 5 && hr < 11) { list = menu.morning; tag = "Morning / 晨食"; }
-    else if(hr >= 11 && hr < 17) { list = menu.noon; tag = "Noon / 午時"; }
-    else if(hr >= 22 || hr < 5) { list = menu.midnight; tag = "Midnight / 深夜"; }
-
-    const item = list[Math.floor(Math.random()*list.length)];
-    document.getElementById('food-cn').innerText = item.cn;
-    document.getElementById('food-en').innerText = item.en;
+    document.getElementById('progress-wrap').style.opacity = 0;
+    document.getElementById('food-cn').innerText = "深夜拉麵";
+    document.getElementById('food-en').innerText = "MIDNIGHT RAMEN";
     document.getElementById('food-cn').style.opacity = 1;
     document.getElementById('food-en').style.opacity = 1;
-    document.getElementById('status-tag').innerText = "DESTINY REVEALED / 命定已現";
-    if (navigator.vibrate) navigator.vibrate([30, 50, 30]); // 結果揭曉時的特殊連震
+    visualVibrate(); // 揭曉瞬間閃爍
   }
 
   update();
