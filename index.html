@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>DESTINY DINNER 200</title>
+  <title>DESTINY DINNER - 50 Options</title>
   <style>
     :root { --accent: #ffffff; --dice-size: 55px; }
     
@@ -32,10 +32,9 @@
     .dice-obj { position: absolute; width: var(--dice-size); height: var(--dice-size); perspective: 800px; }
     .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
     
-    /* 極致透明背景：0.03 */
     .cube div {
       position: absolute; width: var(--dice-size); height: var(--dice-size); 
-      background: rgba(255,255,255,0.01); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.4); border-radius: 15px;
       display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
     }
@@ -52,7 +51,7 @@
     .f2{transform:rotateX(90deg)translateZ(27px)}.f5{transform:rotateX(-90deg)translateZ(27px)}
     .f3{transform:rotateY(90deg)translateZ(27px)}.f4{transform:rotateY(-90deg)translateZ(27px)}
 
-    .result-container { position: absolute; top: 40%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
+    .result-container { position: absolute; top: 38%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
     #f-cn { font-size: 1.6rem; font-weight: 400; letter-spacing: 6px; margin: 0; opacity: 0; transition: 1.5s; color: #ffffff; text-shadow: 0 0 25px rgba(255,255,255,0.8); }
     #f-en { font-size: 0.55rem; opacity: 0; margin-top: 15px; letter-spacing: 3px; color: #ffffff; font-weight: 300; text-transform: uppercase; }
     
@@ -230,14 +229,21 @@
     const hr = new Date().getHours();
     let key = (hr >= 5 && hr < 11) ? "morning" : (hr >= 11 && hr < 17) ? "noon" : (hr >= 22 || hr < 5) ? "midnight" : "evening";
     const item = menu[key][Math.floor(Math.random() * menu[key].length)];
+    
     document.getElementById('f-cn').innerText = item.cn;
     document.getElementById('f-en').innerText = item.en;
     document.getElementById('f-cn').style.opacity = 1;
     document.getElementById('f-en').style.opacity = 1;
     document.getElementById('p-wrap').style.opacity = 0;
+
     setTimeout(() => {
-      const ml = document.getElementById('map-link'); ml.classList.add('show');
-      ml.onclick = () => window.open(`http://googleusercontent.com/maps.google.com/?q=${encodeURIComponent(item.cn)}+restaurant+open+now`, '_blank');
+      const ml = document.getElementById('map-link');
+      ml.classList.add('show');
+      // 修正後的跳轉連結：
+      ml.onclick = () => {
+        const query = encodeURIComponent(item.cn + " restaurant open now");
+        window.open(`https://www.google.com/maps/search/${query}`, '_blank');
+      };
     }, 800);
   }
 
