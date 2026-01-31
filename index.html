@@ -1,219 +1,168 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🎲 极简 3D 摇一摇</title>
+  <title>🎲 命定晚餐 - 玻璃 3D 版</title>
   <style>
     :root { 
       --accent: #ffcc00; 
-      --glass: rgba(255, 255, 255, 0.1);
-      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.3);
     }
 
     body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at center, #2c2c2c 0%, #000 100%);
+      background: radial-gradient(circle at center, #333 0%, #000 100%);
       color: #fff; text-align: center;
       padding: 20px; margin: 0; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    h1 { font-size: 1.8rem; font-weight: 300; letter-spacing: 2px; margin-top: 50px; }
-    
-    /* --- 3D 玻璃感骰子 --- */
-    .dice-container { 
-      display: flex; gap: 30px; margin: 50px 0; 
-      font-size: 110px; 
-      line-height: 1;
-      perspective: 1000px;
+    h1 { font-weight: 200; letter-spacing: 5px; margin-top: 40px; }
+
+    /* --- 玻璃 3D 骰子 --- */
+    .dice-box { display: flex; justify-content: center; gap: 40px; margin: 60px 0; }
+    .scene { width: 80px; height: 80px; perspective: 400px; }
+
+    .cube {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(0.2, 0.8, 0.3, 1);
     }
 
-    .dice {
-      color: #fff;
-      /* 多层阴影模拟立体感和发光 */
-      text-shadow: 
-        0 1px 0 #ccc, 
-        0 2px 0 #c9c9c9, 
-        0 3px 0 #bbb, 
-        0 4px 0 #b9b9b9, 
-        0 5px 0 #aaa, 
-        0 6px 1px rgba(0,0,0,.1), 
-        0 0 5px rgba(0,0,0,.1), 
-        0 1px 3px rgba(0,0,0,.3), 
-        0 3px 5px rgba(0,0,0,.2), 
-        0 5px 10px rgba(0,0,0,.25), 
-        0 10px 10px rgba(0,0,0,.2), 
-        0 20px 20px rgba(0,0,0,.15),
-        0 0 15px var(--accent); /* 核心霓虹感 */
-      transition: all 0.2s ease;
-    }
-    
-    .rolling { 
-      animation: shake3d 0.15s infinite; 
-      color: var(--accent);
-    }
-
-    @keyframes shake3d {
-      0% { transform: rotateX(20deg) rotateY(20deg) translateZ(10px); }
-      50% { transform: rotateX(-20deg) rotateY(-20deg) translateZ(30px); }
-      100% { transform: rotateX(20deg) rotateY(20deg) translateZ(10px); }
-    }
-
-    /* --- 毛玻璃按钮 --- */
-    .glass-btn {
-      background: var(--glass);
-      backdrop-filter: blur(15px); /* 毛玻璃核心 */
-      -webkit-backdrop-filter: blur(15px);
+    .cube div {
+      position: absolute; width: 80px; height: 80px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       border: 1px solid var(--glass-border);
-      color: #fff;
-      padding: 16px 40px;
-      font-size: 1rem;
-      letter-spacing: 1px;
-      border-radius: 18px;
-      cursor: pointer;
-      margin: 10px;
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      border-radius: 15px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; color: #fff;
+      /* 核心：内发光模拟玻璃质感 */
+      box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 0 20px rgba(0,0,0,0.3);
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
-    .glass-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
+    /* 6个面的空间定位 */
+    .front  { transform: rotateY(0deg) translateZ(40px); }
+    .back   { transform: rotateY(180deg) translateZ(40px); }
+    .right  { transform: rotateY(90deg) translateZ(40px); }
+    .left   { transform: rotateY(-90deg) translateZ(40px); }
+    .top    { transform: rotateX(90deg) translateZ(40px); }
+    .bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+    .is-rolling { animation: fast-spin 0.4s infinite linear; }
+    @keyframes fast-spin {
+      from { transform: rotateX(0) rotateY(0); }
+      to { transform: rotateX(360deg) rotateY(360deg); }
     }
 
+    /* --- 毛玻璃高级按钮 --- */
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      color: #fff; padding: 18px 45px; font-size: 1.1rem;
+      border-radius: 25px; cursor: pointer; margin: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      letter-spacing: 2px;
+    }
+
+    .glass-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
     .glass-btn:active { transform: scale(0.95); }
-    
-    #motionBtn { 
-      background: transparent; 
-      font-size: 0.75rem; 
-      opacity: 0.5; 
-      border: none;
-      backdrop-filter: none;
-      text-decoration: underline;
-    }
 
     /* --- 结果卡片 --- */
     .result-card {
-      margin-top: 40px; padding: 30px; 
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      width: 80%; max-width: 320px;
-      box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
-      animation: slideUp 0.5s ease-out;
+      margin-top: 40px; padding: 25px; border-radius: 30px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      width: 280px; backdrop-filter: blur(10px);
+      animation: popUp 0.6s cubic-bezier(0.2, 1, 0.3, 1);
     }
-
-    @keyframes slideUp { 
-      from { opacity: 0; transform: translateY(30px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
+    @keyframes popUp { from { opacity: 0; transform: translateY(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
   </style>
 </head>
 <body>
 
-  <h1>🎲 命定晚餐</h1>
-  <p style="opacity: 0.4; font-size: 0.9rem;">Decision Paralysis Ends Here</p>
+  <h1>命定晚餐</h1>
+  <p style="opacity: 0.4; font-size: 0.8rem;">高级 3D 玻璃质感交互</p>
 
-  <div class="dice-container">
-    <div id="dice1" class="dice">⚅</div>
-    <div id="dice2" class="dice">⚄</div>
+  <div class="dice-box">
+    <div class="scene"><div id="cube1" class="cube">
+      <div class="front">⚀</div><div class="back">⚁</div>
+      <div class="right">⚂</div><div class="left">⚃</div>
+      <div class="top">⚄</div><div class="bottom">⚅</div>
+    </div></div>
+    <div class="scene"><div id="cube2" class="cube">
+      <div class="front">⚀</div><div class="back">⚁</div>
+      <div class="right">⚂</div><div class="left">⚃</div>
+      <div class="top">⚄</div><div class="bottom">⚅</div>
+    </div></div>
   </div>
 
-  <button id="rollBtn" class="glass-btn" onclick="rollDice()">掷骰子</button>
-  <button id="motionBtn" onclick="requestPermission()">点击授权摇一摇</button>
+  <button id="rollBtn" class="glass-btn" onclick="rollDice()">开启掷骰</button>
 
   <div id="result"></div>
 
+  <audio id="diceSound" src="https://www.soundjay.com/misc/sounds/dice-throw-1.mp3"></audio>
+
   <script>
-    const diceFaces = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
-    const foods = ["火锅", "顶级和牛", "芝士汉堡", "麻辣烫", "意大利面", "深夜拉面", "脆皮炸鸡", "生椰沙拉", "川式炒菜", "泰式咖喱"];
-    const emojis = ["🔥", "🥩", "🍔", "🌶️", "🍝", "🍜", "🍗", "🥗", "🥘", "🍛"];
-    const quotes = [
-      "这就是你今天的宿命。",
-      "胃被填满时，灵魂才不会游荡。",
-      "你在逃避人生，而我在帮你选晚餐。",
-      "不用谢，骰子从不说谎。",
-      "这是你平凡生活里唯一的随机惊喜。"
+    const rotations = [
+      { x: 0, y: 0 },       // 1
+      { x: 0, y: 180 },     // 2
+      { x: 0, y: -90 },     // 3
+      { x: 0, y: 90 },      // 4
+      { x: -90, y: 0 },     // 5
+      { x: 90, y: 0 }       // 6
     ];
 
+    const foods = ["火锅", "日式拉面", "美式汉堡", "麻辣烫", "意大利面", "炸鸡啤酒", "广式点心", "轻食沙拉", "东北烧烤", "泰式料理"];
+    
     function rollDice() {
-      const d1 = document.getElementById("dice1");
-      const d2 = document.getElementById("dice2");
       const btn = document.getElementById("rollBtn");
-      const resultBox = document.getElementById("result");
-      
+      const cube1 = document.getElementById("cube1");
+      const cube2 = document.getElementById("cube2");
+      const sound = document.getElementById("diceSound");
+
       if (btn.disabled) return;
       btn.disabled = true;
-      resultBox.innerHTML = "";
 
-      d1.classList.add("rolling");
-      d2.classList.add("rolling");
+      // 播放声效
+      sound.currentTime = 0;
+      sound.play().catch(() => {});
 
-      let count = 0;
-      const interval = setInterval(() => {
-        d1.textContent = diceFaces[Math.floor(Math.random() * 6) + 1];
-        d2.textContent = diceFaces[Math.floor(Math.random() * 6) + 1];
-        count++;
-        if (count > 12) {
-          clearInterval(interval);
-          finalize();
-        }
-      }, 70);
+      cube1.classList.add("is-rolling");
+      cube2.classList.add("is-rolling");
+      document.getElementById("result").innerHTML = "";
 
-      function finalize() {
-        d1.classList.remove("rolling");
-        d2.classList.remove("rolling");
+      setTimeout(() => {
+        cube1.classList.remove("is-rolling");
+        cube2.classList.remove("is-rolling");
 
-        const idx = Math.floor(Math.random() * foods.length);
-        const quote = quotes[Math.floor(Math.random() * quotes.length)];
-        
-        resultBox.innerHTML = `
-          <div class="result-card">
-            <div style="font-size: 0.8rem; opacity: 0.5; margin-bottom: 10px; text-transform: uppercase;">Result</div>
-            <div style="font-size: 2rem; font-weight: bold; margin-bottom: 15px;">
-              ${emojis[idx]} ${foods[idx]}
+        const r1 = Math.floor(Math.random() * 6);
+        const r2 = Math.floor(Math.random() * 6);
+
+        // 随机增加几圈旋转，让动画更自然
+        const extraSpin1 = Math.floor(Math.random() * 3) * 360;
+        const extraSpin2 = Math.floor(Math.random() * 3) * 360;
+
+        cube1.style.transform = `rotateX(${rotations[r1].x + extraSpin1}deg) rotateY(${rotations[r1].y + extraSpin1}deg)`;
+        cube2.style.transform = `rotateX(${rotations[r2].x + extraSpin2}deg) rotateY(${rotations[r2].y + extraSpin2}deg)`;
+
+        const food = foods[Math.floor(Math.random() * foods.length)];
+        setTimeout(() => {
+          document.getElementById("result").innerHTML = `
+            <div class="result-card">
+              <div style="font-size: 0.8rem; opacity: 0.5; margin-bottom: 5px;">今晚建议：</div>
+              <div style="font-size: 1.8rem; font-weight: bold;">${food}</div>
             </div>
-            <div style="color: var(--accent); font-size: 0.85rem; line-height: 1.5; opacity: 0.9;">
-              "${quote}"
-            </div>
-          </div>
-        `;
-        btn.disabled = false;
-      }
-    }
-
-    // --- 传感器授权逻辑 ---
-    let lastX, lastY, lastZ, lastUpdate = 0;
-    function requestPermission() {
-      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        DeviceMotionEvent.requestPermission().then(res => {
-          if (res === 'granted') {
-            startMotion();
-            document.getElementById("motionBtn").style.visibility = "hidden";
-          }
-        });
-      } else {
-        startMotion();
-        document.getElementById("motionBtn").textContent = "摇一摇已开启";
-      }
-    }
-
-    function startMotion() {
-      window.addEventListener('devicemotion', (e) => {
-        const acc = e.accelerationIncludingGravity;
-        const now = Date.now();
-        if ((now - lastUpdate) > 100) {
-          let diff = now - lastUpdate;
-          lastUpdate = now;
-          let speed = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ) / diff * 10000;
-          if (speed > 1200) rollDice();
-          lastX = acc.x; lastY = acc.y; lastZ = acc.z;
-        }
-      });
+          `;
+          btn.disabled = false;
+        }, 500);
+      }, 800);
     }
   </script>
 </body>
