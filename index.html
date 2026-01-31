@@ -10,13 +10,12 @@
 
     #ambient {
       position: absolute; width: 100%; height: 100%;
-      background: radial-gradient(circle at 50% 50%, #151517 0%, #000 100%);
+      background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, #000 100%);
       z-index: 1; pointer-events: none;
     }
 
-    /* 字体缩小，增加高级感 */
     .header { position: absolute; top: 10vh; width: 100%; text-align: center; z-index: 100; pointer-events: none; }
-    h1 { font-weight: 100; font-size: 0.55rem; letter-spacing: 12px; margin: 0; opacity: 0.4; text-indent: 12px; }
+    h1 { font-weight: 100; font-size: 0.55rem; letter-spacing: 12px; margin: 0; opacity: 0.5; text-indent: 12px; }
     
     #p-wrap { width: 30px; height: 1px; background: rgba(255,255,255,0.1); margin: 20px auto; opacity: 0; transition: 0.5s; }
     #p-inner { width: 0%; height: 100%; background: #fff; }
@@ -24,35 +23,39 @@
     #world { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
     .dice-obj { position: absolute; width: var(--dice-size); height: var(--dice-size); perspective: 800px; }
     .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
+    
+    /* 增強骰子質感：提高不透明度與發光 */
     .cube div {
       position: absolute; width: var(--dice-size); height: var(--dice-size); 
-      background: rgba(255,255,255,0.02); backdrop-filter: blur(8px); 
-      border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px;
+      background: rgba(255,255,255,0.08); /* 提高背景亮度 */
+      backdrop-filter: blur(10px); 
+      border: 0.8px solid rgba(255,255,255,0.25); /* 強化邊框 */
+      border-radius: 12px;
       display: flex; justify-content: center; align-items: center;
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.05), 0 0 15px rgba(255,255,255,0.03);
     }
-    .dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; opacity: 0.7; box-shadow: 0 0 5px #fff; }
     
-    /* 骰子面定位 */
+    /* 點數加亮 */
+    .dot { width: 7px; height: 7px; background: #fff; border-radius: 50%; opacity: 0.95; box-shadow: 0 0 8px #fff; }
+    
     .f1{transform:rotateY(0deg)translateZ(25px)}.f6{transform:rotateY(180deg)translateZ(25px)}
     .f2{transform:rotateX(90deg)translateZ(25px)}.f5{transform:rotateX(-90deg)translateZ(25px)}
     .f3{transform:rotateY(90deg)translateZ(25px)}.f4{transform:rotateY(-90deg)translateZ(25px)}
 
-    /* 结果显示 */
     .result-container { position: absolute; top: 38%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
     #f-cn { font-size: 1.3rem; font-weight: 100; letter-spacing: 6px; margin: 0; opacity: 0; transition: 1.5s; text-indent: 6px; }
-    #f-en { font-size: 0.45rem; opacity: 0; margin-top: 10px; letter-spacing: 3px; color: rgba(255,255,255,0.25); text-transform: uppercase; }
+    #f-en { font-size: 0.45rem; opacity: 0; margin-top: 10px; letter-spacing: 3px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
     
     #map-link {
       display: inline-block; margin-top: 35px; padding: 6px 15px;
       font-size: 0.45rem; letter-spacing: 2px; opacity: 0; transition: 1s; 
-      pointer-events: auto; cursor: pointer; color: rgba(255,255,255,0.3); 
-      text-decoration: none; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 20px;
+      pointer-events: auto; cursor: pointer; color: rgba(255,255,255,0.4); 
+      text-decoration: none; border: 0.5px solid rgba(255,255,255,0.15); border-radius: 20px;
     }
     #map-link.show { opacity: 1; }
 
-    /* 极简按钮 */
     .controls { position: absolute; bottom: 10vh; width: 100%; display: flex; justify-content: center; gap: 60px; z-index: 101; }
-    .btn { background: transparent; border: none; color: rgba(255,255,255,0.25); cursor: pointer; text-align: center; transition: 0.3s; }
+    .btn { background: transparent; border: none; color: rgba(255,255,255,0.3); cursor: pointer; text-align: center; transition: 0.3s; }
     .btn span { display: block; font-size: 0.5rem; letter-spacing: 3px; }
     .btn.active { color: #fff; }
   </style>
@@ -91,10 +94,10 @@
 
 <script>
   const menu = {
-    morning: [{cn:"精品手冲", en:"Filter Coffee"}, {cn:"酪梨吐司", en:"Avocado Toast"}, {cn:"希腊优格", en:"Greek Yogurt"}],
-    noon: [{cn:"职人汉堡", en:"Craft Burger"}, {cn:"牛肉面", en:"Beef Noodles"}, {cn:"夏威夷碗", en:"Poke Bowl"}],
-    evening: [{cn:"熟成牛排", en:"Aged Steak"}, {cn:"麻辣火锅", en:"Spicy Hotpot"}, {cn:"职人寿司", en:"Premium Sushi"}],
-    midnight: [{cn:"深夜拉面", en:"Midnight Ramen"}, {cn:"盐酥鸡", en:"Fried Chicken"}, {cn:"关东煮", en:"Oden"}]
+    morning: [{cn:"精品手沖", en:"Filter Coffee"}, {cn:"酪梨吐司", en:"Avocado Toast"}, {cn:"希臘優格", en:"Greek Yogurt"}],
+    noon: [{cn:"職人漢堡", en:"Craft Burger"}, {cn:"牛肉麵", en:"Beef Noodles"}, {cn:"夏威夷碗", en:"Poke Bowl"}],
+    evening: [{cn:"熟成牛排", en:"Aged Steak"}, {cn:"麻辣火鍋", en:"Spicy Hotpot"}, {cn:"職人壽司", en:"Premium Sushi"}],
+    midnight: [{cn:"深夜拉麵", en:"Midnight Ramen"}, {cn:"鹽酥雞", en:"Fried Chicken"}, {cn:"關東煮", en:"Oden"}]
   };
 
   const dSize = 50;
@@ -106,7 +109,6 @@
   function setInitial() {
     const midX = window.innerWidth / 2;
     const midY = window.innerHeight / 2;
-    // 强制侧边对齐，避免重叠
     dice[0].x = midX - dSize - 20;
     dice[0].y = midY - dSize / 2;
     dice[1].x = midX + 20;
@@ -162,7 +164,7 @@
     const bounce = 0.5;
     const friction = 0.96;
 
-    // 碰撞检测：防止两个骰子重叠
+    // 碰撞檢測：防止重疊
     let dx = dice[1].x - dice[0].x;
     let dy = dice[1].y - dice[0].y;
     let dist = Math.sqrt(dx*dx + dy*dy);
@@ -179,7 +181,6 @@
       d.vx *= friction; d.vy *= friction;
       d.x += d.vx; d.y += d.vy;
 
-      // 严格边界锁定
       if(d.x < 5) { d.x = 5; d.vx *= -bounce; }
       if(d.x > window.innerWidth - dSize - 5) { d.x = window.innerWidth - dSize - 5; d.vx *= -bounce; }
       if(d.y < 5) { d.y = 5; d.vy *= -bounce; }
@@ -212,7 +213,7 @@
     setTimeout(() => {
       const ml = document.getElementById('map-link');
       ml.classList.add('show');
-      // 核心功能：点击跳转并自动筛选“当下营业 (Open Now)”
+      // 搜尋時加入 open now 參數
       ml.onclick = () => window.open(`https://www.google.com/maps/search/${encodeURIComponent(item.cn)}+restaurant+open+now/`, '_blank');
     }, 800);
   }
