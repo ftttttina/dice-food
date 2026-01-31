@@ -5,34 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>DESTINY DINNER</title>
   <style>
-    :root { --accent: #fff; --dice-size: 50px; }
+    :root { --accent: #ffffff; --dice-size: 55px; }
     
-    /* 修正 1：恢復呼吸感背景動畫 */
+    /* 強化後的呼吸動畫：色彩更濃，縮放更明顯 */
     @keyframes breathe {
-      0%, 100% { opacity: 0.4; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.1); }
+      0%, 100% { opacity: 0.2; transform: scale(0.9) translate(-50%, -50%); }
+      50% { opacity: 0.7; transform: scale(1.3) translate(-40%, -45%); }
     }
 
     body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: "SF Pro Display", -apple-system, sans-serif; color: var(--accent); }
 
-    #ambient {
-      position: absolute; width: 100%; height: 100%;
-      background: radial-gradient(circle at 50% 50%, #1a1a1e 0%, #000 80%);
-      z-index: 1; pointer-events: none;
-    }
+    #ambient { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a1a1e 0%, #000 90%); z-index: 1; }
     
-    /* 呼吸微光層 */
-    #glow {
-      position: absolute; width: 100%; height: 100%;
-      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
-      z-index: 1; animation: breathe 8s infinite ease-in-out;
+    /* 修正後的呼吸層：定位在中央，半徑加大 */
+    #glow { 
+      position: absolute; top: 40%; left: 50%; width: 150vw; height: 150vw;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+      z-index: 1; animation: breathe 6s infinite ease-in-out;
+      pointer-events: none;
     }
 
     .header { position: absolute; top: 10vh; width: 100%; text-align: center; z-index: 100; pointer-events: none; }
-    h1 { font-weight: 200; font-size: 0.65rem; letter-spacing: 12px; margin: 0; opacity: 0.7; text-indent: 12px; } /* 提高標題亮度 */
+    h1 { font-weight: 300; font-size: 0.65rem; letter-spacing: 12px; margin: 0; color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.3); text-indent: 12px; }
     
-    #p-wrap { width: 40px; height: 1px; background: rgba(255,255,255,0.1); margin: 20px auto; opacity: 0; transition: 0.5s; }
-    #p-inner { width: 0%; height: 100%; background: #fff; }
+    #p-wrap { width: 40px; height: 1px; background: rgba(255,255,255,0.3); margin: 20px auto; opacity: 0; transition: 0.5s; }
+    #p-inner { width: 0%; height: 100%; background: #ffffff; }
 
     #world { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
     .dice-obj { position: absolute; width: var(--dice-size); height: var(--dice-size); perspective: 800px; }
@@ -40,20 +37,13 @@
     
     .cube div {
       position: absolute; width: var(--dice-size); height: var(--dice-size); 
-      background: rgba(255,255,255,0.05); 
-      backdrop-filter: blur(12px); 
-      border: 1px solid rgba(255,255,255,0.4); 
-      border-radius: 12px;
-      padding: 8px; box-sizing: border-box;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      box-shadow: 0 0 20px rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.6); border-radius: 12px;
+      padding: 8px; box-sizing: border-box; display: grid;
+      grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
     }
-    
-    .dot { background: #fff; border-radius: 50%; box-shadow: 0 0 8px #fff; width: 6px; height: 6px; align-self: center; justify-self: center; }
+    .dot { background: #ffffff; border-radius: 50%; box-shadow: 0 0 8px #ffffff; width: 6px; height: 6px; align-self: center; justify-self: center; }
 
-    /* 點數佈局保持不變 */
     .f1 .dot { grid-area: 2/2; }
     .f2 .dot:nth-child(1) { grid-area: 1/1; } .f2 .dot:nth-child(2) { grid-area: 3/3; }
     .f3 .dot:nth-child(1) { grid-area: 1/1; } .f3 .dot:nth-child(2) { grid-area: 2/2; } .f3 .dot:nth-child(3) { grid-area: 3/3; }
@@ -61,41 +51,30 @@
     .f5 .dot:nth-child(1) { grid-area: 1/1; } .f5 .dot:nth-child(2) { grid-area: 1/3; } .f5 .dot:nth-child(3) { grid-area: 2/2; } .f5 .dot:nth-child(4) { grid-area: 3/1; } .f5 .dot:nth-child(5) { grid-area: 3/3; }
     .f6 .dot:nth-child(1) { grid-area: 1/1; } .f6 .dot:nth-child(2) { grid-area: 1/3; } .f6 .dot:nth-child(3) { grid-area: 2/1; } .f6 .dot:nth-child(4) { grid-area: 2/3; } .f6 .dot:nth-child(5) { grid-area: 3/1; } .f6 .dot:nth-child(6) { grid-area: 3/3; }
 
-    .f1{transform:rotateY(0deg)translateZ(25px)}.f6{transform:rotateY(180deg)translateZ(25px)}
-    .f2{transform:rotateX(90deg)translateZ(25px)}.f5{transform:rotateX(-90deg)translateZ(25px)}
-    .f3{transform:rotateY(90deg)translateZ(25px)}.f4{transform:rotateY(-90deg)translateZ(25px)}
+    .f1{transform:rotateY(0deg)translateZ(27px)}.f6{transform:rotateY(180deg)translateZ(27px)}
+    .f2{transform:rotateX(90deg)translateZ(27px)}.f5{transform:rotateX(-90deg)translateZ(27px)}
+    .f3{transform:rotateY(90deg)translateZ(27px)}.f4{transform:rotateY(-90deg)translateZ(27px)}
 
-    /* 結果顯示優化：加強字體清晰度 */
     .result-container { position: absolute; top: 38%; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
-    #f-cn { font-size: 1.6rem; font-weight: 300; letter-spacing: 8px; margin: 0; opacity: 0; transition: 1.5s; text-indent: 8px; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
-    #f-en { font-size: 0.55rem; opacity: 0; margin-top: 15px; letter-spacing: 4px; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    #f-cn { font-size: 1.8rem; font-weight: 400; letter-spacing: 8px; margin: 0; opacity: 0; transition: 1.5s; color: #ffffff; text-shadow: 0 0 20px rgba(255,255,255,0.6); }
+    #f-en { font-size: 0.6rem; opacity: 0; margin-top: 15px; letter-spacing: 4px; color: #ffffff; font-weight: 300; }
     
-    /* 修正 2：加強地圖按鈕的毛玻璃質感 */
     #map-link {
-      display: inline-block; margin-top: 40px; padding: 10px 25px;
-      font-size: 0.55rem; letter-spacing: 2px; opacity: 0; transition: 1s; 
-      pointer-events: auto; cursor: pointer; 
-      color: #fff; background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(255,255,255,0.2); border-radius: 30px;
-      text-decoration: none;
+      display: inline-block; margin-top: 40px; padding: 12px 28px; font-size: 0.6rem; letter-spacing: 2px; opacity: 0; transition: 1s; 
+      pointer-events: auto; cursor: pointer; color: #ffffff; background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.4); border-radius: 30px;
+      text-decoration: none; font-weight: 500;
     }
     #map-link.show { opacity: 1; }
 
-    /* 修正 3：控制按鈕增加毛玻璃質感與清晰度 */
     .controls { position: absolute; bottom: 8vh; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 101; }
     .btn { 
-      background: rgba(255,255,255,0.08); 
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.15); 
-      color: rgba(255,255,255,0.7); 
-      padding: 12px 25px; border-radius: 40px;
-      cursor: pointer; text-align: center; transition: 0.3s; 
-      min-width: 100px;
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3); color: #ffffff; padding: 12px 25px; border-radius: 40px;
+      cursor: pointer; text-align: center; transition: 0.3s; min-width: 100px;
     }
-    .btn span { display: block; font-size: 0.6rem; letter-spacing: 3px; }
-    .btn.active { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.5); }
-    .btn:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+    .btn span { display: block; font-size: 0.65rem; letter-spacing: 3px; font-weight: 500; }
+    .btn:active { background: rgba(255,255,255,0.3); }
   </style>
 </head>
 <body>
@@ -109,20 +88,10 @@
 
 <div id="world">
   <div id="d1" class="dice-obj"><div class="cube" id="c1">
-    <div class="f1"><span class="dot"></span></div>
-    <div class="f2"><span class="dot"></span><span class="dot"></span></div>
-    <div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f1"><span class="dot"></span></div><div class="f2"><span class="dot"></span><span class="dot"></span></div><div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div></div>
   <div id="d2" class="dice-obj"><div class="cube" id="c2">
-    <div class="f1"><span class="dot"></span></div>
-    <div class="f2"><span class="dot"></span><span class="dot"></span></div>
-    <div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-    <div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="f1"><span class="dot"></span></div><div class="f2"><span class="dot"></span><span class="dot"></span></div><div class="f3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="f6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
   </div></div>
 </div>
 
@@ -133,20 +102,37 @@
 </div>
 
 <div class="controls">
-  <div class="btn" onclick="shake()"><span>SHAKE</span></div>
-  <div class="btn" id="mBtn" onclick="toggleMotion()"><span>MOTION</span></div>
+  <div class="btn" onclick="initAudio(); shake()"><span>SHAKE</span></div>
+  <div class="btn" id="mBtn" onclick="initAudio(); toggleMotion()"><span>MOTION</span></div>
 </div>
 
 <script>
-  // 菜單與邏輯保持不變，優化了地圖搜索字詞
+  // 音頻合成器：不需要加載 MP3
+  let audioCtx;
+  function initAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function playTick(vol = 0.1, freq = 800) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq + Math.random() * 200, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+  }
+
   const menu = {
     morning: [{cn:"精品手沖", en:"Filter Coffee"}, {cn:"酪梨吐司", en:"Avocado Toast"}, {cn:"希臘優格", en:"Greek Yogurt"}, {cn:"台式蛋餅", en:"Omelet"}],
     noon: [{cn:"職人漢堡", en:"Craft Burger"}, {cn:"牛肉麵", en:"Beef Noodles"}, {cn:"海南雞飯", en:"Chicken Rice"}, {cn:"夏威夷碗", en:"Poke Bowl"}],
     evening: [{cn:"熟成牛排", en:"Aged Steak"}, {cn:"麻辣火鍋", en:"Spicy Hotpot"}, {cn:"職人壽司", en:"Premium Sushi"}, {cn:"手工披薩", en:"Handmade Pizza"}],
-    midnight: [{cn:"深夜拉麵", en:"Midnight Ramen"}, {cn:"鹽酥雞", en:"Fried Chicken"}, {cn:"關東煮", en:"Oden"}, {cn:"永和豆漿", en:"Soy Milk"}]
+    midnight: [{cn:"深夜拉麵", en:"Midnight Ramen"}, {cn:"鹽酥雞", en:"Fried Chicken"}, {cn:"關東煮", en:"Oden"}, {cn:"居酒屋", en:"Izakaya"}]
   };
 
-  const dSize = 50;
+  const dSize = 55;
   let dice = [
     { el: document.getElementById('d1'), c: document.getElementById('c1'), x: 0, y: 0, vx: 0, vy: 0, rx: 0, ry: 0 },
     { el: document.getElementById('d2'), c: document.getElementById('c2'), x: 0, y: 0, vx: 0, vy: 0, rx: 0, ry: 0 }
@@ -155,11 +141,8 @@
   function setInitial() {
     const midX = window.innerWidth / 2;
     const midY = window.innerHeight / 2;
-    dice[0].x = midX - dSize - 20;
-    dice[0].y = midY - dSize / 2;
-    dice[1].x = midX + 20;
-    dice[1].y = midY - dSize / 2;
-    dice[0].vx = dice[1].vx = dice[0].vy = dice[1].vy = 0;
+    dice[0].x = midX - dSize - 20; dice[0].y = midY - dSize / 2;
+    dice[1].x = midX + 20; dice[1].y = midY - dSize / 2;
     updateUI();
   }
   
@@ -167,6 +150,7 @@
 
   function shake() {
     isRolling = true;
+    playTick(0.2, 400); // 啟動聲
     document.getElementById('f-cn').style.opacity = 0;
     document.getElementById('f-en').style.opacity = 0;
     document.getElementById('map-link').classList.remove('show');
@@ -192,8 +176,11 @@
     useMotion = true; document.getElementById('mBtn').classList.add('active');
     window.addEventListener('deviceorientation', e => {
       if(useMotion) { 
-        gX = e.gamma / 15; gY = e.beta / 15; 
-        if(Math.abs(gX) + Math.abs(gY) > 1.2) { isRolling = true; document.getElementById('f-cn').style.opacity = 0; }
+        gX = e.gamma / 35; gY = e.beta / 35; 
+        if(Math.abs(gX) + Math.abs(gY) > 2.8) { 
+          isRolling = true; 
+          document.getElementById('f-cn').style.opacity = 0; 
+        }
       }
     });
   }
@@ -207,34 +194,37 @@
 
   function update() {
     let energy = 0;
-    const bounce = 0.5;
-    const friction = 0.96;
+    const bounce = 0.5, friction = 0.96;
 
-    let dx = dice[1].x - dice[0].x;
-    let dy = dice[1].y - dice[0].y;
+    let dx = dice[1].x - dice[0].x, dy = dice[1].y - dice[0].y;
     let dist = Math.sqrt(dx*dx + dy*dy);
     if(dist < dSize) {
       let overlap = dSize - dist;
-      let nx = dx / dist; let ny = dy / dist;
+      let nx = dx / dist, ny = dy / dist;
       dice[0].x -= nx * overlap / 2; dice[0].y -= ny * overlap / 2;
       dice[1].x += nx * overlap / 2; dice[1].y += ny * overlap / 2;
       dice[0].vx *= -0.8; dice[1].vx *= -0.8;
+      if (Math.abs(dice[0].vx) > 2) playTick(0.05, 1200); // 碰撞聲
     }
 
     dice.forEach(d => {
       d.vx += gX; d.vy += gY;
       d.vx *= friction; d.vy *= friction;
       d.x += d.vx; d.y += d.vy;
-      if(d.x < 5) { d.x = 5; d.vx *= -bounce; }
-      if(d.x > window.innerWidth - dSize - 5) { d.x = window.innerWidth - dSize - 5; d.vx *= -bounce; }
-      if(d.y < 5) { d.y = 5; d.vy *= -bounce; }
-      if(d.y > window.innerHeight - dSize - 5) { d.y = window.innerHeight - dSize - 5; d.vy *= -bounce; }
+
+      if(d.x < 5 || d.x > window.innerWidth - dSize - 5) { 
+        d.vx *= -bounce; d.x = d.x < 5 ? 5 : window.innerWidth - dSize - 5;
+        if (Math.abs(d.vx) > 2) playTick(0.03, 900); // 撞牆聲
+      }
+      if(d.y < 5 || d.y > window.innerHeight - dSize - 5) { 
+        d.vy *= -bounce; d.y = d.y < 5 ? 5 : window.innerHeight - dSize - 5;
+        if (Math.abs(d.vy) > 2) playTick(0.03, 900);
+      }
       d.rx += d.vy * 5; d.ry += d.vx * 5;
       energy += Math.abs(d.vx) + Math.abs(d.vy);
     });
 
     updateUI();
-
     if(isRolling) {
       document.getElementById('p-inner').style.width = Math.min(100, energy * 4) + "%";
       if(energy < 0.3) { isRolling = false; showResult(); }
@@ -243,6 +233,7 @@
   }
 
   function showResult() {
+    playTick(0.15, 600); // 結果聲
     const hr = new Date().getHours();
     let key = (hr >= 5 && hr < 11) ? "morning" : (hr >= 11 && hr < 17) ? "noon" : (hr >= 22 || hr < 5) ? "midnight" : "evening";
     const item = menu[key][Math.floor(Math.random() * menu[key].length)];
