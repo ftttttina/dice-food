@@ -2,68 +2,57 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>DESTINY DINNER - MONOCHROME</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DESTINY DINNER - ULTIMATE</title>
   <style>
+    /* 保持原有的黑白灰呼吸背景與 3D 骰子樣式 */
     :root { 
-      --accent: #ffffff; /* 纯白高亮 */
-      --glass-bg: rgba(255, 255, 255, 0.03); 
+      --accent: #ffffff; 
+      --glass-bg: rgba(255, 255, 255, 0.05); 
       --glass-border: rgba(255, 255, 255, 0.15);
       --dot-color: rgba(255, 255, 255, 0.85);
-      --bg-deep: #000000;
     }
 
     body {
       font-family: "SF Pro Display", -apple-system, sans-serif;
       margin: 0; padding: 0; height: 100vh; width: 100vw;
-      background: var(--bg-deep); overflow: hidden;
-      display: flex; flex-direction: column; align-items: center; color: #fff;
+      background-color: #000;
+      background-image: 
+        radial-gradient(circle at 20% 30%, #1c1c1e 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, #2c2c2e 0%, transparent 50%);
+      background-attachment: fixed;
+      animation: bgBreathe 8s infinite alternate ease-in-out;
+      overflow: hidden; display: flex; flex-direction: column; align-items: center; color: #fff;
     }
 
-    /* --- Apple 灰阶呼吸感背景 --- */
-    .bg-container {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1; filter: blur(100px); opacity: 0.5;
-    }
-    .blob { position: absolute; width: 700px; height: 700px; border-radius: 50%; }
-    /* 利用灰色阶梯产生明暗对比 */
-    .blob-1 { background: #2c2c2e; top: -20%; left: -10%; animation: breathe 10s infinite alternate ease-in-out; }
-    .blob-2 { background: #1c1c1e; bottom: -10%; right: -10%; animation: breathe 12s infinite alternate-reverse ease-in-out; }
-    .blob-3 { background: #3a3a3c; top: 30%; left: 10%; animation: breathe 15s infinite linear; }
-
-    @keyframes breathe {
-      0% { transform: translate(0,0) scale(1); opacity: 0.3; }
-      100% { transform: translate(100px, 50px) scale(1.4); opacity: 0.7; }
+    @keyframes bgBreathe {
+      0% { background-size: 100% 100%; opacity: 0.8; }
+      100% { background-size: 120% 120%; opacity: 1; }
     }
 
-    /* --- 极简文字 --- */
-    .header { margin-top: 80px; text-align: center; }
-    h1 { font-weight: 200; font-size: 0.8rem; letter-spacing: 12px; margin: 0; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-    .sub-head { font-size: 0.45rem; letter-spacing: 4px; opacity: 0.2; margin-top: 8px; text-transform: uppercase; }
+    .header { margin-top: 12vh; text-align: center; }
+    h1 { font-weight: 200; font-size: 0.85rem; letter-spacing: 12px; margin: 0; text-transform: uppercase; color: rgba(255,255,255,0.9); }
+    .sub-head { font-size: 0.45rem; letter-spacing: 4px; opacity: 0.3; margin-top: 8px; text-transform: uppercase; }
 
-    /* --- 3D 灰阶玻璃骰子 --- */
-    .dice-box { display: flex; gap: 40px; margin: 80px 0; }
-    .scene { width: 65px; height: 65px; perspective: 800px; }
-    .cube {
-      width: 100%; height: 100%; position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-15deg) rotateY(15deg);
-    }
+    .dice-box { display: flex; gap: 40px; margin: 60px 0; }
+    .scene { width: 70px; height: 70px; perspective: 1000px; }
+    .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(15deg); }
     .cube div {
-      position: absolute; width: 65px; height: 65px;
-      background: var(--glass-bg); 
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 0.5px solid var(--glass-border); border-radius: 14px;
-      display: grid; padding: 10px; box-sizing: border-box;
-      /* 增加内发光，模拟侧边金属光感 */
+      position: absolute; width: 70px; height: 70px;
+      background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border: 0.5px solid var(--glass-border); border-radius: 16px;
+      display: grid; padding: 12px; box-sizing: border-box;
       box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
     }
 
-    .dot { display: block; width: 10px; height: 10px; background: var(--dot-color); border-radius: 50%; align-self: center; justify-self: center; }
-    /* 1点改为冷白色，不再使用红色，保持色调纯净 */
-    .face-1 .dot { background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    .dot { display: block; width: 11px; height: 11px; background: var(--dot-color); border-radius: 50%; align-self: center; justify-self: center; }
+    .face-1 .dot { background: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
 
-    /* 布局逻辑保持不变 */
+    /* 3D 面的位置定義 */
+    .front { transform: rotateY(0deg) translateZ(35px); } .back { transform: rotateY(180deg) translateZ(35px); }
+    .right { transform: rotateY(90deg) translateZ(35px); } .left { transform: rotateY(-90deg) translateZ(35px); }
+    .top { transform: rotateX(90deg) translateZ(35px); } .bottom { transform: rotateX(-90deg) translateZ(35px); }
+
     .face-1 { grid-template-areas: "a"; }
     .face-2 { display: flex; justify-content: space-between; } .face-2 .dot:nth-child(2) { align-self: flex-end; }
     .face-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
@@ -72,51 +61,38 @@
     .face-5 { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; } .face-5 .dot:nth-child(5) { grid-area: 2/2; }
     .face-6 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
 
-    .front { transform: rotateY(0deg) translateZ(32.5px); } .back { transform: rotateY(180deg) translateZ(32.5px); }
-    .right { transform: rotateY(90deg) translateZ(32.5px); } .left { transform: rotateY(-90deg) translateZ(32.5px); }
-    .top { transform: rotateX(90deg) translateZ(32.5px); } .bottom { transform: rotateX(-90deg) translateZ(32.5px); }
-
     @keyframes fast-spin { 
       from { transform: rotateX(0) rotateY(0) rotateZ(0); }
       to { transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg); } 
     }
 
-    /* --- 极简控制组 --- */
     .controls { display: flex; gap: 15px; }
     .glass-btn {
-      background: rgba(255, 255, 255, 0.03); border: 0.5px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(30px); color: rgba(255,255,255,0.8); padding: 10px 20px; border-radius: 10px; 
-      cursor: pointer; transition: 0.4s;
+      background: rgba(255, 255, 255, 0.05); border: 0.5px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      color: #fff; padding: 12px 24px; border-radius: 12px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
-    .glass-btn:active { transform: translateY(1px); opacity: 0.6; }
-    .active-motion { border-color: rgba(255,255,255,0.4); color: #fff; }
-
-    .btn-text { font-size: 0.7rem; font-weight: 300; letter-spacing: 2px; display: block; }
+    .btn-text { font-size: 0.75rem; font-weight: 300; letter-spacing: 2px; display: block; }
     .btn-en { font-size: 0.4rem; opacity: 0.3; text-transform: uppercase; margin-top: 3px; }
 
-    /* --- 结果卡片 --- */
+    #result { min-height: 180px; margin-top: 30px; }
     .result-card {
-      margin-top: 60px; padding: 30px; border-radius: 2px; /* 采用硬朗的极小圆角，更显高端 */
-      background: rgba(255, 255, 255, 0.02); border-left: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(40px); width: 200px; text-align: left;
-      animation: fadeIn 1s ease forwards;
+      padding: 25px; border-left: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.01); width: 240px; text-align: left;
+      animation: reveal 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
     }
-    @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-    .food-cn { font-size: 1.4rem; font-weight: 300; letter-spacing: 4px; display: block; }
-    .food-en { font-size: 0.55rem; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px; margin: 4px 0 20px 0; display: block; }
+    @keyframes reveal { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+    .food-cn { font-size: 1.4rem; font-weight: 300; letter-spacing: 3px; display: block; }
+    .food-en { font-size: 0.55rem; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px; margin: 4px 0 15px 0; display: block; }
     .quote-cn { font-size: 0.7rem; opacity: 0.5; font-weight: 200; display: block; line-height: 1.6; }
-    .quote-en { font-size: 0.5rem; opacity: 0.2; font-style: italic; display: block; margin-top: 4px; }
   </style>
 </head>
 <body>
 
-  <div class="bg-container">
-    <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
-  </div>
-
   <div class="header">
-    <h1>命定晚餐</h1>
-    <div class="sub-head">The Destiny Dinner - Monochrome</div>
+    <h1>命定全餐</h1>
+    <div id="time-indicator" class="sub-head">Detecting Time...</div>
   </div>
   
   <div class="dice-box">
@@ -140,10 +116,7 @@
 
   <div class="controls">
     <button class="glass-btn" onclick="rollDice()">
-      <span class="btn-text">掷骰</span><span class="btn-en">Manual</span>
-    </button>
-    <button id="motionBtn" class="glass-btn" onclick="requestMotion()">
-      <span class="btn-text">感应</span><span class="btn-en">Motion</span>
+      <span class="btn-text">擲骰</span><span class="btn-en">Destiny Roll</span>
     </button>
   </div>
 
@@ -155,42 +128,130 @@
       { x: 0, y: 0 }, { x: 0, y: 180 }, { x: 0, y: -90 }, 
       { x: 0, y: 90 }, { x: -90, y: 0 }, { x: 90, y: 0 }
     ];
-    const menu = [
-      { cn: "火锅", en: "HOT POT", q_cn: "静谧中的沸腾。", q_en: "Boiling in silence." },
-      { cn: "拉面", en: "RAMEN", q_cn: "一碗入魂的纯粹。", q_en: "The purity of a soul bowl." },
-      { cn: "西餐", en: "BISTRO", q_cn: "仪式感的极致表达。", q_en: "Expression of ritualism." },
-      { cn: "怀石", en: "KAISEKI", q_cn: "自然的季节馈赠。", q_en: "Gifts of the season." }
-    ];
+
+    const allMenus = {
+      morning: [
+        { cn: "舒肥雞肉沙拉", en: "SOUS VIDE CHICKEN SALAD", q: "清晨的輕盈節奏。" },
+        { cn: "精品手沖咖啡", en: "POUR OVER COFFEE", q: "喚醒感官的儀式。" },
+        { cn: "日式御飯糰", en: "ONIGIRI SELECTION", q: "樸實的微小幸福。" },
+        { cn: "酪梨吐司", en: "AVOCADO TOAST", q: "健康的油脂藝術。" },
+        { cn: "希臘優格碗", en: "GREEK YOGURT BOWL", q: "純淨的活力補給。" },
+        { cn: "法式歐姆蛋", en: "FRENCH OMELLETE", q: "絲滑柔順的晨間。" },
+        { cn: "台式蛋餅", en: "TAIWANESE EGG CRAPE", q: "巷弄間的日常對白。" },
+        { cn: "貝果夾乳酪", en: "BAGEL WITH CREAM CHEESE", q: "紮實的嚼勁滿足。" },
+        { cn: "美式鬆餅", en: "FLUFFY PANCAKES", q: "甜美雲朵般的開始。" },
+        { cn: "傳統豆漿燒餅", en: "SOY MILK & CLAY OVEN ROLL", q: "經典的中式優雅。" },
+        { cn: "義式帕里尼", en: "ITALIAN PANINI", q: "熱壓後的香氣層次。" },
+        { cn: "港式菠蘿油", en: "PINEAPPLE BUN WITH BUTTER", q: "冰火交融的醇厚。" },
+        { cn: "鮮蔬捲餅", en: "VEGGIE BREAKFAST WRAP", q: "纖維與能量的平衡。" },
+        { cn: "英式早午餐", en: "FULL ENGLISH BREAKFAST", q: "飽滿的豐盛啟程。" },
+        { cn: "水果燕麥片", en: "FRUIT OATMEAL", q: "緩慢釋放的暖意。" }
+      ],
+      noon: [
+        { cn: "商務精緻便當", en: "PREMIUM BENTO", q: "高效能的能量補給。" },
+        { cn: "義大利波隆那麵", en: "PASTA BOLOGNESE", q: "經典風味的沈澱。" },
+        { cn: "紅燒牛肉麵", en: "BEEF NOODLE SOUP", q: "濃郁湯頭的匠心。" },
+        { cn: "海南雞飯", en: "HAINANESE CHICKEN RICE", q: "滑嫩間的南洋涼意。" },
+        { cn: "日式豬排丼", en: "KATSU DON", q: "金黃酥脆的滿足。" },
+        { cn: "泰式打拋豬", en: "THAI BASIL PORK", q: "辛辣開胃的節奏。" },
+        { cn: "美式雙層漢堡", en: "DOUBLE CHEESEBURGER", q: "卡路里的絕對正義。" },
+        { cn: "韓式石鍋拌飯", en: "BIBIMBAP", q: "五彩繽紛的滋味。" },
+        { cn: "夏威夷波奇碗", en: "POKE BOWL", q: "鮮甜海味的原型。" },
+        { cn: "越式炸春捲粉", en: "VIETNAMESE BUN CHA", q: "清爽酸甜的平衡。" },
+        { cn: "印度雞肉咖哩", en: "CHICKEN TIKKA MASALA", q: "辛香料的層次交織。" },
+        { cn: "港式乾炒牛河", en: "STIR-FRIED RICE NOODLES", q: "鍋氣四溢的豪邁。" },
+        { cn: "墨西哥夾餅", en: "TACO SELECTION", q: "熱情洋溢的手感料理。" },
+        { cn: "舒食溫沙拉", en: "WARM GRAIN SALAD", q: "溫暖身心的輕負擔。" },
+        { cn: "法式鹹派", en: "QUICHE LORRAINE", q: "酥脆派皮下的溫柔。" }
+      ],
+      evening: [
+        { cn: "頂級麻辣火鍋", en: "SPICY HOT POT", q: "靜謐中的熱烈沸騰。" },
+        { cn: "職人握壽司", en: "PREMIUM SUSHI", q: "指尖傳遞的時令鮮美。" },
+        { cn: "法式油封鴨腿", en: "DUCK CONFIT", q: "時間醞釀的法式經典。" },
+        { cn: "乾式熟成牛排", en: "DRY-AGED STEAK", q: "濃縮肉香的奢華極致。" },
+        { cn: "日式居酒屋", en: "IZAKAYA STYLE", q: "煙火氣中的夜間漫談。" },
+        { cn: "懷石料理", en: "KAISEKI EXPERIENCE", q: "自然的季節饋贈。" },
+        { cn: "義式手工披薩", en: "WOOD-FIRED PIZZA", q: "炭火烘烤的純粹。" },
+        { cn: "西班牙燉飯", en: "PAELLA SEAFOOD", q: "地中海的陽光濃縮。" },
+        { cn: "韓式部隊鍋", en: "BUDAE JJIGAE", q: "熱氣騰騰的共聚時刻。" },
+        { cn: "粵式片皮鴨", en: "PEKING DUCK", q: "酥脆與鮮嫩的交響。" },
+        { cn: "泰式檸檬魚", en: "STEAMED LEMON FISH", q: "酸辣鮮香的盛宴。" },
+        { cn: "英式威靈頓牛排", en: "BEEF WELLINGTON", q: "酥皮下的優雅包裹。" },
+        { cn: "地中海烤羊排", en: "ROASTED LAMB CHOPS", q: "辛香野性的洗鍊。" },
+        { cn: "黑松露燉飯", en: "TRUFFLE RISOTTO", q: "森林大地的深邃香氣。" },
+        { cn: "經典美式燒烤", en: "BBQ SMOKED RIBS", q: "豪邁奔放的靈魂料理。" }
+      ],
+      midnight: [
+        { cn: "深夜博多拉麵", en: "TONKOTSU RAMEN", q: "靈魂深處的濃厚慰藉。" },
+        { cn: "日式炭火串燒", en: "YAKITORI NIGHT", q: "微醺後的最佳夥伴。" },
+        { cn: "台式鹽酥雞", en: "TAIWANESE FRIED CHICKEN", q: "邪惡卻必要的療癒。" },
+        { cn: "港式生滾粥", en: "CANTONESE CONGEE", q: "暖到心底的溫柔甜美。" },
+        { cn: "韓式炸雞啤酒", en: "CHIMAEK", q: "脆皮與泡沫的狂歡。" },
+        { cn: "美式深夜肉醬薯條", en: "CHILI FRIES", q: "放縱的最後一哩路。" },
+        { cn: "特製牛肉炒麵", en: "FRIED NOODLES", q: "鍋氣渲染的午夜夢迴。" },
+        { cn: "宵夜清粥小菜", en: "CONGEE & SMALL DISHES", q: "平凡中的安定感。" },
+        { cn: "義式起司拼盤", en: "CHEESE PLATTER", q: "搭配紅酒的優雅尾聲。" },
+        { cn: "深夜三明治", en: "NIGHT CLUB SANDWICH", q: "層次分明的冷餐時光。" },
+        { cn: "墨西哥起司薄餅", en: "QUESADILLA", q: "濃郁起司的鹹香誘惑。" },
+        { cn: "永和豆漿", en: "YONGHE SOY MILK", q: "跨越時空的深夜經典。" },
+        { cn: "關東煮", en: "ODEN SELECTION", q: "清澈湯汁裡的暖意。" },
+        { cn: "深夜甜點盤", en: "DESSERT DEGUSTATION", q: "給這一天一個甜美句點。" },
+        { cn: "現做熱壓吐司", en: "HOT PRESSED TOAST", q: "簡單卻極致的香脆。" }
+      ]
+    };
 
     let rolling = false;
+
+    function getTimedMenu() {
+      const hour = new Date().getHours();
+      const indicator = document.getElementById("time-indicator");
+      
+      if (hour >= 5 && hour < 11) {
+        indicator.innerText = "Morning Selection";
+        return allMenus.morning;
+      } else if (hour >= 11 && hour < 16) {
+        indicator.innerText = "Lunch Selection";
+        return allMenus.noon;
+      } else if (hour >= 22 || hour < 5) {
+        indicator.innerText = "Midnight Selection";
+        return allMenus.midnight;
+      } else {
+        indicator.innerText = "Dinner Selection";
+        return allMenus.evening;
+      }
+    }
+
+    // 初始化顯示時段
+    getTimedMenu();
 
     function rollDice() {
       if (rolling) return;
       rolling = true;
-      const sound = document.getElementById("diceSound");
-      sound.currentTime = 0; sound.play().catch(()=>{});
+      document.getElementById("diceSound").play().catch(()=>{});
+      document.getElementById("result").innerHTML = "";
 
       const c1 = document.getElementById("cube1");
       const c2 = document.getElementById("cube2");
-      document.getElementById("result").innerHTML = "";
-
-      c1.style.animation = `fast-spin ${(Math.random() * 0.1 + 0.3).toFixed(2)}s infinite linear`;
-      c2.style.animation = `fast-spin ${(Math.random() * 0.1 + 0.4).toFixed(2)}s infinite linear`;
+      c1.style.animation = `fast-spin 0.3s infinite linear`;
+      c2.style.animation = `fast-spin 0.4s infinite linear`;
 
       setTimeout(() => {
         stopCube(c1, 0);
-        stopCube(c2, 120);
+        stopCube(c2, 180);
 
-        const choice = menu[Math.floor(Math.random() * menu.length)];
+        const currentMenu = getTimedMenu();
+        const choice = currentMenu[Math.floor(Math.random() * currentMenu.length)];
+        
         setTimeout(() => {
           document.getElementById("result").innerHTML = `
             <div class="result-card">
-              <span class="food-cn">${choice.cn}</span><span class="food-en">${choice.en}</span>
-              <span class="quote-cn">${choice.q_cn}</span><span class="quote-en">${choice.q_en}</span>
+              <span class="food-cn">${choice.cn}</span>
+              <span class="food-en">${choice.en}</span>
+              <span class="quote-cn">${choice.q}</span>
             </div>
           `;
           rolling = false;
-        }, 1000);
+        }, 1100);
       }, 700);
     }
 
@@ -198,33 +259,10 @@
       setTimeout(() => {
         cube.style.animation = "none";
         const r = Math.floor(Math.random() * 6);
-        const offset = (Math.floor(Math.random() * 2) + 2) * 360;
-        const skewX = (Math.random() - 0.5) * 10;
-        
+        const offset = 1440;
         cube.style.transition = `transform 1.3s cubic-bezier(0.19, 1, 0.22, 1)`;
-        cube.style.transform = `rotateX(${rotations[r].x + offset + skewX}deg) rotateY(${rotations[r].y + offset}deg)`;
+        cube.style.transform = `rotateX(${rotations[r].x + offset}deg) rotateY(${rotations[r].y + offset}deg)`;
       }, delay);
-    }
-
-    function requestMotion() {
-      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        DeviceMotionEvent.requestPermission().then(res => { if (res === 'granted') setupMotion(); });
-      } else { setupMotion(); }
-    }
-
-    function setupMotion() {
-      let lastX, lastY, lastZ, lastUpdate = 0;
-      window.addEventListener('devicemotion', (e) => {
-        const acc = e.accelerationIncludingGravity;
-        const now = Date.now();
-        if ((now - lastUpdate) > 100) {
-          let diff = now - lastUpdate; lastUpdate = now;
-          let speed = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ) / diff * 10000;
-          if (speed > 2500) rollDice();
-          lastX = acc.x; lastY = acc.y; lastZ = acc.z;
-        }
-      });
-      document.getElementById("motionBtn").classList.add("active-motion");
     }
   </script>
 </body>
