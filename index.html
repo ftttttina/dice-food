@@ -3,62 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🎲 Destiny Dinner - 命定晚餐</title>
+  <title>DESTINY DINNER 3D - ASYNC</title>
   <style>
     :root { 
-      --accent: #ff4d4d; 
-      --glass-bg: rgba(255, 255, 255, 0.5);
-      --glass-border: rgba(255, 255, 255, 0.8);
-      --dot-color: #333;
+      --accent: #ff3b30; 
+      --glass-bg: rgba(255, 255, 255, 0.08); 
+      --glass-border: rgba(255, 255, 255, 0.25);
+      --dot-color: rgba(255, 255, 255, 0.9);
     }
 
     body {
-      font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
+      font-family: "SF Pro Display", -apple-system, sans-serif;
       margin: 0; padding: 0; height: 100vh; width: 100vw;
-      background: #ffffff; overflow: hidden;
-      display: flex; flex-direction: column; align-items: center; color: #222;
+      background: #000; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; color: #fff;
     }
 
     /* --- 极速液态流动背景 --- */
     .bg-container {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1; filter: blur(90px); opacity: 0.7;
+      z-index: -1; filter: blur(80px); opacity: 0.8;
     }
-    .blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; }
-    /* 加快了 animation 时间 (8s, 10s, 7s) */
-    .blob-1 { background: #ffc2d1; top: -10%; left: -10%; animation: liquid 8s infinite alternate ease-in-out; }
-    .blob-2 { background: #c2e9ff; bottom: -10%; right: -10%; animation: liquid 10s infinite alternate-reverse ease-in-out; }
-    .blob-3 { background: #d0ffc2; top: 20%; left: 20%; animation: liquid 7s infinite linear; }
-
+    .blob { position: absolute; width: 600px; height: 600px; border-radius: 50%; mix-blend-mode: screen; }
+    .blob-1 { background: #5e17eb; top: -10%; left: -10%; animation: liquid 6s infinite alternate ease-in-out; }
+    .blob-2 { background: #007aff; bottom: -10%; right: -10%; animation: liquid 8s infinite alternate-reverse ease-in-out; }
+    .blob-3 { background: #ff2d55; top: 20%; left: 20%; animation: liquid 5s infinite linear; }
     @keyframes liquid {
       0% { transform: translate(0,0) scale(1) rotate(0deg); }
-      100% { transform: translate(250px, 150px) scale(1.4) rotate(90deg); }
+      100% { transform: translate(300px, 200px) scale(1.5) rotate(180deg); }
     }
 
-    /* --- 标题缩小 --- */
-    .header-group { margin-top: 60px; text-align: center; }
-    h1 { font-weight: 300; font-size: 1.2rem; letter-spacing: 8px; margin: 0; color: #000; text-transform: uppercase; }
-    .sub-title { font-size: 0.6rem; letter-spacing: 2px; opacity: 0.4; margin-top: 4px; }
+    /* --- 极简双语标题 --- */
+    .header { margin-top: 60px; text-align: center; }
+    h1 { font-weight: 200; font-size: 0.9rem; letter-spacing: 10px; margin: 0; text-transform: uppercase; opacity: 0.9; }
+    .sub-head { font-size: 0.5rem; letter-spacing: 3px; opacity: 0.3; margin-top: 6px; text-transform: uppercase; }
 
-    /* --- 3D 骰子 --- */
-    .dice-box { display: flex; gap: 40px; margin: 60px 0; }
-    .scene { width: 80px; height: 80px; perspective: 400px; }
+    /* --- 3D 玻璃骰子 (异步支持) --- */
+    .dice-box { display: flex; gap: 40px; margin: 70px 0; }
+    .scene { width: 70px; height: 70px; perspective: 600px; }
     .cube {
       width: 100%; height: 100%; position: relative;
       transform-style: preserve-3d;
-      transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1.15);
+      /* 初始状态略微倾斜更有立体感 */
+      transform: rotateX(-20deg) rotateY(20deg);
     }
     .cube div {
-      position: absolute; width: 80px; height: 80px;
-      background: var(--glass-bg); backdrop-filter: blur(8px);
-      border: 1.5px solid var(--glass-border); border-radius: 20px;
-      display: grid; padding: 12px; box-sizing: border-box;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+      position: absolute; width: 70px; height: 70px;
+      background: var(--glass-bg); 
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 0.5px solid var(--glass-border); border-radius: 16px;
+      display: grid; padding: 10px; box-sizing: border-box;
+      box-shadow: inset 0 0 15px rgba(255,255,255,0.05), 0 5px 15px rgba(0,0,0,0.5);
     }
-    .dot { display: block; width: 14px; height: 14px; background: var(--dot-color); border-radius: 50%; align-self: center; justify-self: center; }
-    .face-1 .dot { background: var(--accent); }
 
-    /* 点数布局代码保持不变... (face-1 到 face-6) */
+    .dot { display: block; width: 12px; height: 12px; background: var(--dot-color); border-radius: 50%; align-self: center; justify-self: center; }
+    .face-1 .dot { background: var(--accent); box-shadow: 0 0 12px rgba(255,59,48,0.6); }
+
+    /* 布局省略，结构同前... */
     .face-1 { grid-template-areas: "a"; }
     .face-2 { display: flex; justify-content: space-between; } .face-2 .dot:nth-child(2) { align-self: flex-end; }
     .face-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
@@ -67,35 +68,40 @@
     .face-5 { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; } .face-5 .dot:nth-child(5) { grid-area: 2/2; }
     .face-6 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
 
-    .front { transform: rotateY(0deg) translateZ(40px); } .back { transform: rotateY(180deg) translateZ(40px); }
-    .right { transform: rotateY(90deg) translateZ(40px); } .left { transform: rotateY(-90deg) translateZ(40px); }
-    .top { transform: rotateX(90deg) translateZ(40px); } .bottom { transform: rotateX(-90deg) translateZ(40px); }
+    .front { transform: rotateY(0deg) translateZ(35px); } .back { transform: rotateY(180deg) translateZ(35px); }
+    .right { transform: rotateY(90deg) translateZ(35px); } .left { transform: rotateY(-90deg) translateZ(35px); }
+    .top { transform: rotateX(90deg) translateZ(35px); } .bottom { transform: rotateX(-90deg) translateZ(35px); }
 
-    .is-rolling { animation: fast-spin 0.4s infinite linear; }
-    @keyframes fast-spin { to { transform: rotateX(360deg) rotateY(360deg); } }
+    /* 关键：定义快速旋转的动画源 */
+    @keyframes fast-spin { 
+      from { transform: rotateX(0) rotateY(0) rotateZ(0); }
+      to { transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg); } 
+    }
 
-    /* --- 按钮 & 卡片 --- */
+    /* --- 控制组 --- */
+    .controls { display: flex; gap: 12px; }
     .glass-btn {
-      background: rgba(0, 0, 0, 0.04); backdrop-filter: blur(15px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      color: #000; padding: 16px 45px; border-radius: 30px; cursor: pointer; transition: 0.3s;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px); color: #fff; padding: 12px 24px; border-radius: 40px; 
+      cursor: pointer; transition: 0.3s;
     }
-    .btn-text { font-size: 1rem; font-weight: 500; letter-spacing: 2px; display: block; }
-    .btn-sub { font-size: 0.5rem; opacity: 0.4; text-transform: uppercase; margin-top: 2px; }
+    .active-motion { border-color: #34c759; color: #34c759; }
 
+    .btn-text { font-size: 0.8rem; font-weight: 400; letter-spacing: 1px; display: block; }
+    .btn-en { font-size: 0.45rem; opacity: 0.4; text-transform: uppercase; margin-top: 2px; }
+
+    /* --- 结果卡片 --- */
     .result-card {
-      margin-top: 30px; padding: 25px; border-radius: 32px;
-      background: rgba(255, 255, 255, 0.6); border: 1px solid var(--glass-border);
-      backdrop-filter: blur(25px); width: 260px; text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-      animation: popUp 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+      margin-top: 40px; padding: 25px; border-radius: 35px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(30px); width: 240px; text-align: center;
+      animation: pop 0.6s cubic-bezier(0.15, 0.85, 0.3, 1.2) forwards;
     }
-    @keyframes popUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
-    .food-cn { font-size: 1.8rem; font-weight: bold; color: #000; display: block; }
-    .food-en { font-size: 0.8rem; font-weight: 300; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block; }
-    .quote-cn { font-size: 0.8rem; color: #444; display: block; }
-    .quote-en { font-size: 0.65rem; color: #aaa; font-style: italic; display: block; margin-top: 2px; }
+    @keyframes pop { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .food-cn { font-size: 1.6rem; font-weight: 600; display: block; }
+    .food-en { font-size: 0.65rem; opacity: 0.4; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; display: block; }
+    .quote-cn { font-size: 0.75rem; opacity: 0.7; display: block; }
+    .quote-en { font-size: 0.55rem; opacity: 0.3; font-style: italic; display: block; }
   </style>
 </head>
 <body>
@@ -104,9 +110,9 @@
     <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
   </div>
 
-  <div class="header-group">
+  <div class="header">
     <h1>命定晚餐</h1>
-    <div class="sub-title">DESTINY DINNER</div>
+    <div class="sub-head">DESTINY DINNER 3D</div>
   </div>
   
   <div class="dice-box">
@@ -128,13 +134,16 @@
     </div></div>
   </div>
 
-  <button id="rollBtn" class="glass-btn" onclick="rollDice()">
-    <span class="btn-text">掷骰子</span>
-    <span class="btn-sub">Roll the Dice</span>
-  </button>
+  <div class="controls">
+    <button class="glass-btn" onclick="rollDice()">
+      <span class="btn-text">掷骰</span><span class="btn-en">Manual</span>
+    </button>
+    <button id="motionBtn" class="glass-btn" onclick="requestMotion()">
+      <span class="btn-text">感应</span><span class="btn-en">Motion</span>
+    </button>
+  </div>
 
   <div id="result"></div>
-
   <audio id="diceSound" src="https://www.soundjay.com/misc/sounds/dice-throw-1.mp3"></audio>
 
   <script>
@@ -142,53 +151,82 @@
       { x: 0, y: 0 }, { x: 0, y: 180 }, { x: 0, y: -90 }, 
       { x: 0, y: 90 }, { x: -90, y: 0 }, { x: 90, y: 0 }
     ];
-
     const menu = [
-      { cn: "火锅", en: "Hot Pot", q_cn: "这就是命运的安排。", q_en: "It's the arrangement of destiny." },
-      { cn: "日式拉面", en: "Japanese Ramen", q_cn: "别想了，吃就对了。", q_en: "Just eat it, don't look back." },
-      { cn: "美式汉堡", en: "Cheese Burger", q_cn: "肠胃会感谢这个决定的。", q_en: "Your stomach will thank you." },
-      { cn: "麻辣烫", en: "Spicy Hot Pot", q_cn: "概率论拯救了你的纠结。", q_en: "Probability saves your indecision." },
-      { cn: "意大利面", en: "Pasta", q_cn: "填充空虚的胃与灵魂。", q_en: "Fill your empty soul and stomach." }
+      { cn: "火锅", en: "Hot Pot", q_cn: "沸腾中遇见美味。", q_en: "Meet deliciousness in boiling." },
+      { cn: "拉面", en: "Ramen", q_cn: "浓郁汤头的匠心。", q_en: "The soul of rich broth." },
+      { cn: "汉堡", en: "Burger", q_cn: "卡路里带来的快乐。", q_en: "Happiness from calories." },
+      { cn: "点心", en: "Dim Sum", q_cn: "精致的小确幸。", q_en: "Exquisite little happiness." }
     ];
 
-    function rollDice() {
-      const btn = document.getElementById("rollBtn");
-      const c1 = document.getElementById("cube1");
-      const c2 = document.getElementById("cube2");
-      const sound = document.getElementById("diceSound");
+    let rolling = false;
 
-      if (btn.disabled) return;
-      btn.disabled = true;
+    function rollDice() {
+      if (rolling) return;
+      rolling = true;
+      
+      const sound = document.getElementById("diceSound");
       sound.currentTime = 0; sound.play().catch(()=>{});
 
-      c1.classList.add("is-rolling");
-      c2.classList.add("is-rolling");
+      const c1 = document.getElementById("cube1");
+      const c2 = document.getElementById("cube2");
       document.getElementById("result").innerHTML = "";
 
+      // 1. 设置不同的旋转速度
+      c1.style.animation = `fast-spin ${(Math.random() * 0.1 + 0.3).toFixed(2)}s infinite linear`;
+      c2.style.animation = `fast-spin ${(Math.random() * 0.1 + 0.4).toFixed(2)}s infinite linear`;
+
+      // 2. 异步停止逻辑
       setTimeout(() => {
-        c1.classList.remove("is-rolling");
-        c2.classList.remove("is-rolling");
-
-        const r1 = Math.floor(Math.random() * 6);
-        const r2 = Math.floor(Math.random() * 6);
-
-        c1.style.transform = `rotateX(${rotations[r1].x + 720}deg) rotateY(${rotations[r1].y + 720}deg)`;
-        c2.style.transform = `rotateX(${rotations[r2].x + 1080}deg) rotateY(${rotations[r2].y + 1080}deg)`;
+        // 给两个骰子设置不同的停止延迟 (100ms 差值)
+        stopCube(c1, 0);
+        stopCube(c2, 150);
 
         const choice = menu[Math.floor(Math.random() * menu.length)];
-        
         setTimeout(() => {
           document.getElementById("result").innerHTML = `
             <div class="result-card">
-              <span class="food-cn">${choice.cn}</span>
-              <span class="food-en">${choice.en}</span>
-              <span class="quote-cn">${choice.q_cn}</span>
-              <span class="quote-en">${choice.q_en}</span>
+              <span class="food-cn">${choice.cn}</span><span class="food-en">${choice.en}</span>
+              <span class="quote-cn">${choice.q_cn}</span><span class="quote-en">${choice.q_en}</span>
             </div>
           `;
-          btn.disabled = false;
-        }, 600);
-      }, 800);
+          rolling = false;
+        }, 800);
+      }, 700);
+    }
+
+    function stopCube(cube, delay) {
+      setTimeout(() => {
+        cube.style.animation = "none";
+        const r = Math.floor(Math.random() * 6);
+        // 加入随机多转几圈 offset 和 细微倾斜度 skew
+        const offset = (Math.floor(Math.random() * 2) + 2) * 360;
+        const skewX = (Math.random() - 0.5) * 15;
+        const skewZ = (Math.random() - 0.5) * 15;
+        
+        cube.style.transition = `transform 1.1s cubic-bezier(0.15, 0.85, 0.3, 1.1)`;
+        cube.style.transform = `rotateX(${rotations[r].x + offset + skewX}deg) rotateY(${rotations[r].y + offset}deg) rotateZ(${skewZ}deg)`;
+      }, delay);
+    }
+
+    function requestMotion() {
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(res => { if (res === 'granted') setupMotion(); });
+      } else { setupMotion(); }
+    }
+
+    function setupMotion() {
+      let lastX, lastY, lastZ, lastUpdate = 0;
+      window.addEventListener('devicemotion', (e) => {
+        const acc = e.accelerationIncludingGravity;
+        const now = Date.now();
+        if ((now - lastUpdate) > 100) {
+          let diff = now - lastUpdate; lastUpdate = now;
+          let speed = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ) / diff * 10000;
+          if (speed > 2500) rollDice();
+          lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+        }
+      });
+      document.getElementById("motionBtn").classList.add("active-motion");
     }
   </script>
 </body>
